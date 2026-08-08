@@ -41,10 +41,39 @@ export default function LoginPage() {
     if (enteredPin.length < 4) { toast.error('Please enter your 4-digit PIN.'); return; }
     setLoading(true);
     try {
-      const isEmail = identifier.includes('@');
-      const email = isEmail ? identifier : `${identifier}@miaoda.com`;
-      const { error } = await supabase.auth.signInWithPassword({ email, password: enteredPin });
+      let emailToUse = identifier.trim();
+
+      // If not an email, look up the real email by username
+      if (!emailToUse.includes('@')) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('email, id')
+          .eq('username', emailToUse)
+          .maybeSingle();
+        if (!profile?.email) {
+          toast.error('Username not found. Please check and try again.');
+          setLoading(false);
+          return;
+        }
+        emailToUse = profile.email;
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email: emailToUse, password: enteredPin });
       if (error) throw error;
+
+      // Send login alert (non-blocking)
+      if (data.user) {
+        const { data: profile } = await supabase.from('profiles').select('first_name, username').eq('id', data.user.id).maybeSingle();
+        supabase.functions.invoke('send-email', {
+          body: {
+            type: 'login_alert',
+            to: emailToUse,
+            user_id: data.user.id,
+            data: { first_name: profile?.first_name || profile?.username || 'User' },
+          },
+        }).catch(() => null);
+      }
+
       toast.success('Welcome back!');
       navigate('/dashboard');
     } catch (err: unknown) {

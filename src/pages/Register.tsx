@@ -58,12 +58,12 @@ export default function RegisterPage() {
     if (!form.agree) { toast.error('Please accept terms & conditions.'); return; }
     if (form.login_pin.length !== 4) { toast.error('PIN must be exactly 4 digits.'); return; }
     if (!/^\d{4}$/.test(form.login_pin)) { toast.error('PIN must be numeric.'); return; }
+    if (!form.email) { toast.error('Email is required.'); return; }
     setLoading(true);
     try {
-      const email = `${form.username}@miaoda.com`;
-      // Use pin as password for username-based auth
+      // Use real email address for auth; PIN is the password
       const { data: authData, error: signUpErr } = await supabase.auth.signUp({
-        email,
+        email: form.email,
         password: form.login_pin,
         options: {
           data: {
@@ -75,30 +75,61 @@ export default function RegisterPage() {
             country: form.country,
             login_pin: form.login_pin,
           },
+          emailRedirectTo: 'https://skybordbank.com/dashboard',
         },
       });
       if (signUpErr) throw signUpErr;
 
-      // Update profile with contact info
       if (authData.user) {
-        await supabase.from('profiles').update({ email: form.email, phone: form.phone }).eq('id', authData.user.id);
+        // Update profile with full contact info + username
+        await supabase.from('profiles').update({
+          email: form.email,
+          phone: form.phone,
+          first_name: form.fname,
+          last_name: form.lname,
+          username: form.username,
+          gender: form.gender,
+          dob: form.dob,
+          country: form.country,
+          login_pin: form.login_pin,
+        }).eq('id', authData.user.id);
+
         // Create bank account
-        await supabase.from('bank_accounts').insert({
+        const { data: newAccount } = await supabase.from('bank_accounts').insert({
           user_id: authData.user.id,
           account_type: form.account_type,
           currency: form.currency,
           branch: form.branch,
           apy: form.account_type === 'savings' ? 4.85 : form.account_type === 'fixed' ? 5.40 : 0,
           balance: 0,
-        });
+        }).select('account_number').maybeSingle();
+
         // KYC upload
         if (frontFile || backFile) await uploadKyc(authData.user.id);
+
+        // Send welcome email (non-blocking)
+        supabase.functions.invoke('send-email', {
+          body: {
+            type: 'welcome',
+            to: form.email,
+            user_id: authData.user.id,
+            data: {
+              first_name: form.fname,
+              username: form.username,
+              account_number: newAccount?.account_number || '',
+            },
+          },
+        }).catch(() => null);
       }
-      toast.success('Account created successfully! Please sign in.');
+      toast.success('Account created! Check your email, then sign in.');
       navigate('/login');
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Registration failed';
-      toast.error(msg.includes('already') ? 'Username already taken.' : msg);
+      if (msg.includes('already registered') || msg.includes('already taken')) {
+        toast.error('Email or username already registered. Please use different credentials.');
+      } else {
+        toast.error(msg);
+      }
     } finally {
       setLoading(false);
     }

@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUserAccounts, transferFunds } from '@/services/api';
+import { supabase } from '@/db/supabase';
 import type { BankAccount } from '@/types';
 import { toast } from 'sonner';
 
@@ -42,6 +43,30 @@ export default function TransferPage() {
     try {
       await transferFunds({ fromAccountId: fromId, toAccountNumber: toAccount.trim(), amount: amountNum, description: description || 'Fund Transfer' });
       toast.success(`$${amountNum.toFixed(2)} transferred successfully!`);
+
+      // Send transfer confirmation email (non-blocking)
+      if (user) {
+        const { data: profile } = await supabase.from('profiles').select('email, first_name, username').eq('id', user.id).maybeSingle();
+        const updatedAccount = (await getUserAccounts(user.id)).find((a) => a.id === fromId);
+        if (profile?.email) {
+          supabase.functions.invoke('send-email', {
+            body: {
+              type: 'transfer',
+              to: profile.email,
+              user_id: user.id,
+              data: {
+                first_name: profile.first_name || profile.username || 'User',
+                amount: amountNum,
+                currency: fromAccount?.currency || 'USD',
+                recipient_account: toAccount.trim(),
+                description: description || 'Fund Transfer',
+                new_balance: updatedAccount?.balance,
+              },
+            },
+          }).catch(() => null);
+        }
+      }
+
       navigate('/dashboard');
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Transfer failed');

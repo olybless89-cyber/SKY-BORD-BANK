@@ -34,6 +34,13 @@ import TransferPage from '@/pages/dashboard/Transfer';
 import InvestmentsPage from '@/pages/dashboard/Investments';
 import ProfilePage from '@/pages/dashboard/Profile';
 
+// Admin pages
+import AdminLayout from '@/pages/admin/AdminLayout';
+import AdminOverview from '@/pages/admin/AdminOverview';
+import AdminUsers from '@/pages/admin/AdminUsers';
+import AdminKYC from '@/pages/admin/AdminKYC';
+import AdminTransactions from '@/pages/admin/AdminTransactions';
+
 // 404
 import NotFound from '@/pages/NotFound';
 
@@ -71,6 +78,14 @@ const App: React.FC = () => {
               <Route path="transfer" element={<TransferPage />} />
               <Route path="investments" element={<InvestmentsPage />} />
               <Route path="profile" element={<ProfilePage />} />
+            </Route>
+
+            {/* Admin portal (role=admin check inside AdminLayout) */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminOverview />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="kyc" element={<AdminKYC />} />
+              <Route path="transactions" element={<AdminTransactions />} />
             </Route>
 
             <Route path="/404" element={<NotFound />} />

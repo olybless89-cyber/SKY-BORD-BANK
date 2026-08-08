@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, ArrowLeftRight, History, User,
-  Building2, LogOut, Menu, X, Settings, TrendingUp,
+  Building2, LogOut, Menu, Settings, TrendingUp, Shield,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
@@ -50,6 +50,9 @@ function NavContent({ onClose }: { onClose?: () => void }) {
           {profile?.first_name ? `${profile.first_name} ${profile.last_name || ''}` : profile?.username || 'User'}
         </div>
         <div className="text-xs text-muted-foreground truncate">{profile?.email || ''}</div>
+        {profile?.role === 'admin' && (
+          <span className="text-xs font-bold text-destructive mt-1 inline-block">ADMINISTRATOR</span>
+        )}
       </div>
 
       <nav className="flex-1 px-4 py-4 flex flex-col gap-1">
@@ -69,6 +72,23 @@ function NavContent({ onClose }: { onClose?: () => void }) {
             {label}
           </Link>
         ))}
+
+        {/* Admin portal link — only for admins */}
+        {profile?.role === 'admin' && (
+          <Link
+            to="/admin"
+            onClick={onClose}
+            className={cn(
+              'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mt-2 border border-destructive/30',
+              pathname.startsWith('/admin')
+                ? 'bg-destructive/20 text-destructive'
+                : 'text-destructive/70 hover:text-destructive hover:bg-destructive/10'
+            )}
+          >
+            <Shield className="w-4 h-4 shrink-0" />
+            Admin Portal
+          </Link>
+        )}
       </nav>
 
       <div className="p-4 border-t border-border flex flex-col gap-2">
@@ -119,3 +139,4 @@ export default function DashboardLayout() {
     </div>
   );
 }
+

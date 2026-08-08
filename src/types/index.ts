@@ -81,6 +81,7 @@ export interface KycDocument {
   back_url: string | null;
   status: KycStatus;
   notes: string | null;
+  admin_notes: string | null;
   created_at: string;
   updated_at: string;
 }
