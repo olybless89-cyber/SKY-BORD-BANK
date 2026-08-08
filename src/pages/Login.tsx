@@ -58,7 +58,9 @@ export default function LoginPage() {
         emailToUse = profile.email;
       }
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email: emailToUse, password: enteredPin });
+      // PIN is stored as skb_XXXX (6 chars) to meet Supabase min-length requirement
+      const PIN_SECRET = `skb_${enteredPin}`;
+      const { data, error } = await supabase.auth.signInWithPassword({ email: emailToUse, password: PIN_SECRET });
       if (error) throw error;
 
       // Send login alert (non-blocking)

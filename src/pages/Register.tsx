@@ -58,13 +58,15 @@ export default function RegisterPage() {
     if (!form.agree) { toast.error('Please accept terms & conditions.'); return; }
     if (form.login_pin.length !== 4) { toast.error('PIN must be exactly 4 digits.'); return; }
     if (!/^\d{4}$/.test(form.login_pin)) { toast.error('PIN must be numeric.'); return; }
+    // Supabase requires min 6-char password; pad PIN with a static prefix
+    const PIN_SECRET = `skb_${form.login_pin}`;
     if (!form.email) { toast.error('Email is required.'); return; }
     setLoading(true);
     try {
       // Use real email address for auth; PIN is the password
       const { data: authData, error: signUpErr } = await supabase.auth.signUp({
         email: form.email,
-        password: form.login_pin,
+        password: PIN_SECRET,
         options: {
           data: {
             first_name: form.fname,
