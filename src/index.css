@@ -1,0 +1,94 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+
+    /* SKY-BORD BANK – Dark Teal Institutional Theme */
+    --background: 222 47% 6%;
+    --foreground: 210 40% 93%;
+
+    --card: 222 40% 9%;
+    --card-foreground: 210 40% 93%;
+
+    --popover: 222 40% 9%;
+    --popover-foreground: 210 40% 93%;
+
+    --primary: 172 97% 24%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 30% 14%;
+    --secondary-foreground: 210 40% 93%;
+
+    --muted: 222 30% 14%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 172 97% 24%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 25% 18%;
+    --input: 222 25% 18%;
+    --ring: 172 97% 24%;
+
+    --chart-1: 172 97% 24%;
+    --chart-2: 172 70% 40%;
+    --chart-3: 197 60% 45%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    --sidebar-background: 222 47% 6%;
+    --sidebar-foreground: 210 40% 93%;
+    --sidebar-primary: 172 97% 24%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 30% 14%;
+    --sidebar-accent-foreground: 210 40% 93%;
+    --sidebar-border: 222 25% 18%;
+    --sidebar-ring: 172 97% 24%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Manrope', 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(172 70% 45%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .glass-card {
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .teal-glow {
+    box-shadow: 0 0 30px rgba(2, 121, 107, 0.25);
+  }
+  .hero-overlay {
+    background: linear-gradient(90deg, rgba(2,45,41,0.92) 0%, rgba(2,45,41,0.6) 55%, rgba(0,0,0,0.1) 100%);
+  }
+  .section-muted {
+    background: hsl(222 40% 8%);
+  }
+}
