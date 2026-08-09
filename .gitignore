@@ -32,3 +32,9 @@ history/*.json
 
 .sync
 .vite_cache
+.native-wind-cache
+.vite
+
+# Sensitive / platform files
+historical_context.txt
+.env
