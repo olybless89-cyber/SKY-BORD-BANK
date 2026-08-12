@@ -4,7 +4,7 @@
 
 | Item | Details |
 |------|---------|
-| Endpoint | `POST https://app-dkf2jpb9xc01-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations` |
+| Endpoint | `POST https://app-dlavm6ky20ap-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations` |
 | Function | Submit an image generation task; supports text-to-image and image-to-image. Returns a `task_id` for subsequent polling. |
 | Note | Submits the generation task; this call is billed |
 
@@ -58,7 +58,7 @@ async function createImageTask(params: {
   external_task_id?: string;
 }): Promise<{ task_id: string; task_status: string }> {
   const response = await fetch(
-    "https://app-dkf2jpb9xc01-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations",
+    "https://app-dlavm6ky20ap-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations",
     {
       method: "POST",
       headers: {
@@ -148,7 +148,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    "https://app-dkf2jpb9xc01-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations",
+    "https://app-dlavm6ky20ap-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations",
     {
       method: "POST",
       headers: {

@@ -3,7 +3,7 @@
 ## Endpoint
 
 ```
-POST https://app-dkf2jpb9xc01-api-VaOwP8E7dJqa.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse
+POST https://app-dlavm6ky20ap-api-VaOwP8E7dJqa.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse
 ```
 
 - **Method**: POST
@@ -85,7 +85,7 @@ async function callLargeLanguageModel(
   contents: ContentMessage[]
 ): Promise<string> {
   const response = await fetch(
-    "https://app-dkf2jpb9xc01-api-VaOwP8E7dJqa.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse",
+    "https://app-dlavm6ky20ap-api-VaOwP8E7dJqa.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse",
     {
       method: "POST",
       headers: {
@@ -205,7 +205,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream (streaming) ---
   const upstream = await fetch(
-    "https://app-dkf2jpb9xc01-api-VaOwP8E7dJqa.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse",
+    "https://app-dlavm6ky20ap-api-VaOwP8E7dJqa.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse",
     {
       method: "POST",
       headers: {

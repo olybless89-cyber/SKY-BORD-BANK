@@ -52,7 +52,7 @@ deepresearch-aws/
 
 **API 端点**：
 ```
-https://app-dkf2jpb9xc01-api-zYm4X4jwv0bL.gateway.appmedo.com/
+https://app-dlavm6ky20ap-api-zYm4X4jwv0bL.gateway.appmedo.com/
 ```
 
 ### 3.2 monitor.py

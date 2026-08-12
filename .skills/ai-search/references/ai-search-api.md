@@ -4,7 +4,7 @@
 
 | Item | Value |
 |------|-------|
-| Endpoint URL | `POST https://app-dkf2jpb9xc01-api-zYm4ze3j7XvL.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse` |
+| Endpoint URL | `POST https://app-dlavm6ky20ap-api-zYm4ze3j7XvL.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse` |
 | HTTP Method | POST |
 | Content-Type | `application/json` |
 | Auth Header | `X-Gateway-Authorization: Bearer ${INTEGRATIONS_API_KEY}` |
@@ -145,7 +145,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream SSE stream ---
   const upstream = await fetch(
-    "https://app-dkf2jpb9xc01-api-zYm4ze3j7XvL.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse",
+    "https://app-dlavm6ky20ap-api-zYm4ze3j7XvL.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse",
     {
       method: "POST",
       headers: {

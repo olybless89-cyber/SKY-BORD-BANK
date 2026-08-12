@@ -4,7 +4,7 @@
 
 | Property | Value |
 |----------|-------|
-| Endpoint | `POST https://app-dkf2jpb9xc01-api-k93RvqRrRZba.gateway.appmedo.com/v1/videos/omni-video` |
+| Endpoint | `POST https://app-dlavm6ky20ap-api-k93RvqRrRZba.gateway.appmedo.com/v1/videos/omni-video` |
 | HTTP Method | `POST` |
 | Request Header Content-Type | `application/json` |
 | Authorization Header | `X-Gateway-Authorization: Bearer ${INTEGRATIONS_API_KEY}` |
@@ -132,7 +132,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    "https://app-dkf2jpb9xc01-api-k93RvqRrRZba.gateway.appmedo.com/v1/videos/omni-video",
+    "https://app-dlavm6ky20ap-api-k93RvqRrRZba.gateway.appmedo.com/v1/videos/omni-video",
     {
       method: "POST",
       headers: {

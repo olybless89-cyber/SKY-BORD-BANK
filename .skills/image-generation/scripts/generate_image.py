@@ -33,8 +33,8 @@ import urllib.request
 import urllib.error
 
 
-SUBMIT_URL = "https://app-dkf2jpb9xc01-api-zYkZzKQJrBdL.gateway.appmedo.com/image-generation/submit"
-QUERY_URL = "https://app-dkf2jpb9xc01-api-GYX1lzGw0DQa.gateway.appmedo.com/image-generation/task"
+SUBMIT_URL = "https://app-dlavm6ky20ap-api-zYkZzKQJrBdL.gateway.appmedo.com/image-generation/submit"
+QUERY_URL = "https://app-dlavm6ky20ap-api-GYX1lzGw0DQa.gateway.appmedo.com/image-generation/task"
 
 POLL_INTERVAL_S = 7
 SAFE_LIMIT_S = 550  # stay under the default timeout

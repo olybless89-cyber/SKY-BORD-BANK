@@ -1,6 +1,6 @@
 # Entity Search API
 
-**Endpoint:** `GET https://app-dkf2jpb9xc01-api-Xa6JZq205MNa.gateway.appmedo.com/v1/entity/search`
+**Endpoint:** `GET https://app-dlavm6ky20ap-api-Xa6JZq205MNa.gateway.appmedo.com/v1/entity/search`
 
 Search for financial market entities (stocks, funds, indices, etc.) by keyword, ticker symbol, exchange, type, industry, or country. Useful for resolving company names to ticker symbols before querying price data. Returns up to 50 results per request.
 
@@ -83,7 +83,7 @@ async function searchEntities(params: EntitySearchParams = {}): Promise<EntitySe
   if (params.page !== undefined) query.set("page", String(params.page));
 
   const response = await fetch(
-    `https://app-dkf2jpb9xc01-api-Xa6JZq205MNa.gateway.appmedo.com/v1/entity/search?${query.toString()}`,
+    `https://app-dlavm6ky20ap-api-Xa6JZq205MNa.gateway.appmedo.com/v1/entity/search?${query.toString()}`,
     { method: "GET", headers: { "Accept": "application/json" } }
   );
 
@@ -142,7 +142,7 @@ serve(async (req: Request): Promise<Response> => {
   const query = new URLSearchParams(params);
 
   const upstream = await fetch(
-    `https://app-dkf2jpb9xc01-api-Xa6JZq205MNa.gateway.appmedo.com/v1/entity/search?${query.toString()}`,
+    `https://app-dlavm6ky20ap-api-Xa6JZq205MNa.gateway.appmedo.com/v1/entity/search?${query.toString()}`,
     {
       method: "GET",
       headers: {

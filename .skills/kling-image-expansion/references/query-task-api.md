@@ -12,7 +12,7 @@ Covers two endpoints:
 
 | Item | Details |
 |------|---------|
-| Endpoint | `GET https://app-dkf2jpb9xc01-api-AalZkkAG5w7L.gateway.appmedo.com/v1/images/editing/expand/{task_id}` |
+| Endpoint | `GET https://app-dlavm6ky20ap-api-AalZkkAG5w7L.gateway.appmedo.com/v1/images/editing/expand/{task_id}` |
 | Function | Queries the status and result of a single image expansion task, including generated image URLs |
 | Billing | Free (query only, not billed) |
 | `external_task_id` | `string` | Query | No | Custom task ID provided when the task was created |
@@ -44,7 +44,7 @@ Covers two endpoints:
 
 | Item | Details |
 |------|---------|
-| Endpoint | `GET https://app-dkf2jpb9xc01-api-pLVzAAkGZwDL.gateway.appmedo.com/v1/images/editing/expand` |
+| Endpoint | `GET https://app-dlavm6ky20ap-api-pLVzAAkGZwDL.gateway.appmedo.com/v1/images/editing/expand` |
 | Function | Retrieves a paginated list of all image expansion tasks |
 | Billing | Free (query only, not billed) |
 | `pageNum` | `integer` | No | Page number, range [1, 1000], default 1 |
@@ -148,7 +148,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    `https://app-dkf2jpb9xc01-api-AalZkkAG5w7L.gateway.appmedo.com/v1/images/editing/expand/${task_id}`,
+    `https://app-dlavm6ky20ap-api-AalZkkAG5w7L.gateway.appmedo.com/v1/images/editing/expand/${task_id}`,
     {
       method: "GET",
       headers: {

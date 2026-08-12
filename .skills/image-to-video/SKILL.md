@@ -12,8 +12,8 @@ Use Kling AI to generate a short video (5 or 10 seconds) from a single image. Su
 
 | Item | Details |
 |------|---------|
-| Submit endpoint | `POST https://app-dkf2jpb9xc01-api-rY7JZvg0dqdL.gateway.appmedo.com/v1/videos/image2video` |
-| Query endpoint | `GET https://app-dkf2jpb9xc01-api-oYA6Z8wDBRDa.gateway.appmedo.com/v1/videos/image2video/{id}` |
+| Submit endpoint | `POST https://app-dlavm6ky20ap-api-rY7JZvg0dqdL.gateway.appmedo.com/v1/videos/image2video` |
+| Query endpoint | `GET https://app-dlavm6ky20ap-api-oYA6Z8wDBRDa.gateway.appmedo.com/v1/videos/image2video/{id}` |
 | Processing mode | Async — submit then poll, maximum wait 10 minutes |
 | Video duration | `"5"` or `"10"` seconds |
 | Image requirements | JPG/JPEG/PNG, ≤ 10 MB, minimum dimension ≥ 300 px, aspect ratio 1:2.5 ~ 2.5:1 |

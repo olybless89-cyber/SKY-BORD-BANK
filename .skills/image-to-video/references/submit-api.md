@@ -4,7 +4,7 @@
 
 | Item | Details |
 |------|---------|
-| Endpoint | `POST https://app-dkf2jpb9xc01-api-rY7JZvg0dqdL.gateway.appmedo.com/v1/videos/image2video` |
+| Endpoint | `POST https://app-dlavm6ky20ap-api-rY7JZvg0dqdL.gateway.appmedo.com/v1/videos/image2video` |
 | Authentication | `X-Gateway-Authorization: Bearer ${INTEGRATIONS_API_KEY}` |
 | Content-Type | `application/json` |
 | Note | Used to submit the video generation task; billed on submission regardless of final result |
@@ -139,7 +139,7 @@ serve(async (req: Request): Promise<Response> => {
   if (prompt) requestBody.prompt = prompt;
 
   const upstream = await fetch(
-    "https://app-dkf2jpb9xc01-api-rY7JZvg0dqdL.gateway.appmedo.com/v1/videos/image2video",
+    "https://app-dlavm6ky20ap-api-rY7JZvg0dqdL.gateway.appmedo.com/v1/videos/image2video",
     {
       method: "POST",
       headers: {

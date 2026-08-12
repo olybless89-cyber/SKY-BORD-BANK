@@ -21,8 +21,8 @@ import urllib.parse
 import urllib.request
 
 
-SUBMIT_URL = "https://app-dkf2jpb9xc01-api-k93RvqRrRZba.gateway.appmedo.com/v1/videos/omni-video"
-QUERY_URL_BASE = "https://app-dkf2jpb9xc01-api-pLVzAEz1ZQOL.gateway.appmedo.com/v1/videos/omni-video"
+SUBMIT_URL = "https://app-dlavm6ky20ap-api-k93RvqRrRZba.gateway.appmedo.com/v1/videos/omni-video"
+QUERY_URL_BASE = "https://app-dlavm6ky20ap-api-pLVzAEz1ZQOL.gateway.appmedo.com/v1/videos/omni-video"
 POLL_INTERVAL_S = 7
 SAFE_LIMIT_S = 550
 

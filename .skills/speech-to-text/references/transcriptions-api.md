@@ -4,7 +4,7 @@
 
 | Property | Value |
 |----------|-------|
-| Endpoint | `POST https://app-dkf2jpb9xc01-api-DY8MNQoqOnMa.gateway.appmedo.com/v1/audio/transcriptions` |
+| Endpoint | `POST https://app-dlavm6ky20ap-api-DY8MNQoqOnMa.gateway.appmedo.com/v1/audio/transcriptions` |
 | HTTP Method | `POST` |
 | Request Content-Type | `multipart/form-data` (file upload) or `application/x-www-form-urlencoded` (URL submission) |
 | Auth Header | `X-Gateway-Authorization: Bearer <AUTH_VALUE>` |
@@ -213,7 +213,7 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   // --- Call upstream ---
-  const upstream = await fetch("https://app-dkf2jpb9xc01-api-DY8MNQoqOnMa.gateway.appmedo.com/v1/audio/transcriptions", {
+  const upstream = await fetch("https://app-dlavm6ky20ap-api-DY8MNQoqOnMa.gateway.appmedo.com/v1/audio/transcriptions", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -324,6 +324,6 @@ async function transcribeAudio(params: {
 - **Billing**: This endpoint is billed per call. For long audio, confirm the content before calling to avoid unnecessary repeated requests.
 - **Speaker diarization**: `speaker_labels=true` requires `response_format=verbose_json`; speaker labels will not appear in the response otherwise.
 - **File upload vs URL**: Local files must be uploaded via `multipart/form-data` (do not set `Content-Type` manually — let fetch fill in the boundary automatically); URL submission uses `application/x-www-form-urlencoded` and is simpler.
-- **EU compliance**: To process data on EU servers, replace `app-dkf2jpb9xc01-api-DY8MNQoqOnMa.gateway.appmedo.com` with `eu-app-dkf2jpb9xc01-api-DY8MNQoqOnMa.gateway.appmedo.com`. Note: EU processing incurs a surcharge over standard processing.
+- **EU compliance**: To process data on EU servers, replace `app-dlavm6ky20ap-api-DY8MNQoqOnMa.gateway.appmedo.com` with `eu-app-dlavm6ky20ap-api-DY8MNQoqOnMa.gateway.appmedo.com`. Note: EU processing incurs a surcharge over standard processing.
 - **Async transcription**: For longer audio (tens of minutes or more), use the `callback_url` parameter to trigger async transcription and avoid request timeouts.
 - **Subtitle generation**: `srt` and `vtt` formats can be used directly as video subtitle files — no additional parsing needed.

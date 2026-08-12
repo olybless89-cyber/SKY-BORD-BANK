@@ -13,7 +13,7 @@ import urllib.error
 import urllib.request
 
 
-ENDPOINT = "https://app-dkf2jpb9xc01-api-GaDwZ8DX7jPY.gateway.appmedo.com/language/translate/v2"
+ENDPOINT = "https://app-dlavm6ky20ap-api-GaDwZ8DX7jPY.gateway.appmedo.com/language/translate/v2"
 
 
 def fail(message):

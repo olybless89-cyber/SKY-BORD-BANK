@@ -9,7 +9,7 @@ import urllib.error
 import urllib.request
 
 
-ENDPOINT = "https://app-dkf2jpb9xc01-api-zYm4ze3j7XvL.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse"
+ENDPOINT = "https://app-dlavm6ky20ap-api-zYm4ze3j7XvL.gateway.appmedo.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse"
 
 
 def fail(message):
