@@ -30,21 +30,6 @@ def pack(
     validate: bool = True,
     infer_author_func=None,
 ) -> tuple[None, str]:
-    """Pack an unpacked Office document directory into a DOCX, PPTX, or XLSX file.
-
-    Optionally runs schema and redlining validation with auto-repair before packing.
-    All XML files are condensed (pretty-print whitespace removed) before archiving.
-
-    Args:
-        input_directory: Path to the unpacked Office document directory.
-        output_file: Destination file path (.docx, .pptx, or .xlsx).
-        original_file: Original Office file used as a validation baseline.
-        validate: Whether to run validation before packing.
-        infer_author_func: Optional callable to infer the redlining author.
-
-    Returns:
-        A tuple of (None, status_message).
-    """
     input_dir = Path(input_directory)
     output_path = Path(output_file)
     suffix = output_path.suffix.lower()
@@ -89,7 +74,6 @@ def _run_validation(
     suffix: str,
     infer_author_func=None,
 ) -> tuple[bool, str | None]:
-    """Run appropriate validators for the given file type, returning (success, output_message)."""
     output_lines = []
     validators = []
 
@@ -124,10 +108,6 @@ def _run_validation(
 
 
 def _condense_xml(xml_file: Path) -> None:
-    """Strip insignificant whitespace text-nodes and comments from an XML file in place.
-
-    Preserves text inside elements whose tag ends with ':t' (OOXML text runs).
-    """
     try:
         with open(xml_file, encoding="utf-8") as f:
             dom = defusedxml.minidom.parse(f)

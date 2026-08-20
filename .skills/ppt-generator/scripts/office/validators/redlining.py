@@ -9,21 +9,7 @@ from pathlib import Path
 
 
 class RedliningValidator:
-    """Validator that verifies all text edits in a DOCX are represented as tracked changes.
-
-    Compares the unpacked document against the original .docx by removing the author's
-    tracked changes from both and checking that the resulting plain text is identical.
-    """
-
     def __init__(self, unpacked_dir, original_docx, verbose=False, author="Claude"):
-        """Initialise the validator.
-
-        Args:
-            unpacked_dir: Directory containing the modified document XML files.
-            original_docx: Path to the original .docx file for comparison.
-            verbose: Whether to print passing-check messages.
-            author: Name of the author whose tracked changes are expected.
-        """
         self.unpacked_dir = Path(unpacked_dir)
         self.original_docx = Path(original_docx)
         self.verbose = verbose
@@ -33,15 +19,9 @@ class RedliningValidator:
         }
 
     def repair(self) -> int:
-        """No auto-repair implemented for redlining; always returns 0."""
         return 0
 
     def validate(self):
-        """Verify that all text modifications are captured as tracked changes by the expected author.
-
-        Returns True if the document text (after removing the author's tracked changes) matches
-        the original, False otherwise.
-        """
         modified_file = self.unpacked_dir / "word" / "document.xml"
         if not modified_file.exists():
             print(f"FAILED - Modified document.xml not found at {modified_file}")
@@ -121,7 +101,6 @@ class RedliningValidator:
             return True
 
     def _generate_detailed_diff(self, original_text, modified_text):
-        """Build a human-readable diff error message between original and modified text."""
         error_parts = [
             f"FAILED - Document text doesn't match after removing {self.author}'s tracked changes",
             "",
@@ -145,7 +124,6 @@ class RedliningValidator:
         return "\n".join(error_parts)
 
     def _get_git_word_diff(self, original_text, modified_text):
-        """Return a word-level git diff string between two text blobs, or None if git is unavailable."""
         try:
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_path = Path(temp_dir)
@@ -217,7 +195,6 @@ class RedliningValidator:
         return None
 
     def _remove_author_tracked_changes(self, root):
-        """Remove the author's <w:ins> elements and unwrap <w:del> elements in place on the XML tree."""
         ins_tag = f"{{{self.namespaces['w']}}}ins"
         del_tag = f"{{{self.namespaces['w']}}}del"
         author_attr = f"{{{self.namespaces['w']}}}author"
@@ -249,7 +226,6 @@ class RedliningValidator:
                 parent.remove(del_elem)
 
     def _extract_text_content(self, root):
-        """Extract paragraph text as a newline-joined string from the document XML tree."""
         p_tag = f"{{{self.namespaces['w']}}}p"
         t_tag = f"{{{self.namespaces['w']}}}t"
 

@@ -22,12 +22,12 @@ import urllib.parse
 import urllib.request
 
 
-ONECALL_URL = "https://app-dlavm6ky20ap-api-wL1zlmgJGAlY.gateway.appmedo.com/data/3.0/onecall"
-TIMEMACHINE_URL = "https://app-dlavm6ky20ap-api-Aa2PZmgJq5OL.gateway.appmedo.com/data/3.0/onecall/timemachine"
-DAY_SUMMARY_URL = "https://app-dlavm6ky20ap-api-2Y00zmgJ8lBY.gateway.appmedo.com/data/3.0/onecall/day_summary"
-OVERVIEW_URL = "https://app-dlavm6ky20ap-api-oYA6ZxVqenDa.gateway.appmedo.com/data/3.0/onecall/overview"
-ASSISTANT_CREATE_URL = "https://app-dlavm6ky20ap-api-79jKPlpvAJ0L.gateway.appmedo.com/assistant/session"
-ASSISTANT_CONTINUE_URL = "https://app-dlavm6ky20ap-api-oYA6ZxVqyK8a.gateway.appmedo.com/assistant/session"
+ONECALL_URL = "https://app-dptqkburek1u-api-wL1zlmgJGAlY.gateway.appmedo.com/data/3.0/onecall"
+TIMEMACHINE_URL = "https://app-dptqkburek1u-api-Aa2PZmgJq5OL.gateway.appmedo.com/data/3.0/onecall/timemachine"
+DAY_SUMMARY_URL = "https://app-dptqkburek1u-api-2Y00zmgJ8lBY.gateway.appmedo.com/data/3.0/onecall/day_summary"
+OVERVIEW_URL = "https://app-dptqkburek1u-api-oYA6ZxVqenDa.gateway.appmedo.com/data/3.0/onecall/overview"
+ASSISTANT_CREATE_URL = "https://app-dptqkburek1u-api-79jKPlpvAJ0L.gateway.appmedo.com/assistant/session"
+ASSISTANT_CONTINUE_URL = "https://app-dptqkburek1u-api-oYA6ZxVqyK8a.gateway.appmedo.com/assistant/session"
 
 
 def fail(message):

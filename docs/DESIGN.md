@@ -1,32 +1,38 @@
-# Theme Name: Dark
-# Vibe & Description: Against a dark base, information density is intentionally reduced, using whitespace and rhythm to structure content. Hierarchy is built primarily through font size, weight, and spacing rather than ornamentation. The overall design is highly restrained, with almost no shadows or strokes, keeping the interface calm and visually durable in dark environments.
+## Vibe
+- Swiss International Style × Midnight Vault — a private-banking editorial mood: crisp grid, deep navy void, and fine gold accents. Trust comes from typographic precision and restrained hierarchy, not ornament.
 
-# Color
-""- Primary Background: #0B0F19;
-- Secondary Background / Cards: #0F172A.
-- Primary Text: #E5E7EB.
--Secondary Text: #9CA3AF.
--Border: #1F2937 (1px).
-- Unique Signal Color (selectable based on user requirements): Used for selected states, primary buttons, and current status indicators. → Should remain clear but not glaring in dark environments.
+## Color
+- Primary: #60A5FA (trust blue, for CTAs, links, active states)
+- On Primary: #0A0E1A (near-black navy)
+- Accent: #D4AF37 (warm gold, for badges, highlights, hover underlines)
+- On Accent: #0A0E1A
+- Background: #0A0E1A (midnight navy)
+- Foreground: #F8FAFC (cool white)
+- Muted: #94A3B8 (slate blue-gray)
+- Border: #1E293B (subtle navy border)
+- Secondary: #111827 (dark inkwell, for cards and hover surfaces)
 
-# Font
-- Heading & Body: Montserrat (url: https://resource-static.bj.bcebos.com/fonts/Montserrat-VariableFont_wght.woff2)
-# Animation
-## Elemental animation
-- The animation is minimalist and linear. Elements slide into place along the grid lines;
-##Entrance animation
-- There is no bouncing or elasticity effect; the page scrolls naturally like a document with an ease-out effect.
-## Transition animation
-- Use a fade-in or slight shift when loading content;
-## Animation implementation
-- The project integrates the tailwindcss-intersect plugin, which allows you to achieve animation effects when elements enter the viewport in a manner similar to the following:
-opacity-0 intersect:opacity-100 transition duration-700
--Animations can also be achieved using motion/react.
+## Typography
+- Heading: "Space Grotesk" (family: 'Space Grotesk', weight: 700, url: https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap)
+- Body: "Sora" (family: 'Sora', weight: 400, url: https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&display=swap)
 
-# Layout
-- Content is organized into clear modules. Ample white space is used to distinguish different sections.
-- Prefers left-aligned text and structured image layouts, avoiding decorative misalignments.
+## Visual Language
+- Core visual signature: a luminous blue horizontal "beam" line behind the hero headline — a thin, soft-glow accent that suggests a secure vault scan, paired with a gold accent dot.
+- Material & depth: surfaces sit on the midnight background; cards use Secondary fill with a single-pixel Border; no drop shadows on cards; depth comes from a faint radial gradient glow behind the hero, not flat color blocks.
+- Containers & buttons: buttons are pill-shaped with sharp inner spacing; primary uses Primary background with On Primary text; secondary buttons use transparent border, not a white fill; cards have 16px-radius (use consistent rounded corners), no border-left accent bars.
+- Layout rhythm: generous top and bottom section padding; alternating text alignment (center for hero/testimonials, left for feature lists); small gold accents on icons and badges; whitespace drives the premium feel.
 
-# Elements
-- Prefers minimalist linear charts with uniform stroke thickness and no fill.
-- Shadow ≈ 0, border ≤ 1px, minimizes the button's visual impact; main button ≠ large color block, emphasizes text more.
+## Animation
+- Entrance: sections fade-in and translate-y by 24px when entering the viewport; hero title and subtitle stagger by 120ms.
+- Interaction: primary buttons scale to 0.98 on press; links show a gold underline that slides in from left; cards lift -4px on hover.
+- Scroll: number counters in the security section animate when they enter viewport; FAQ items expand smoothly with height transition.
+
+## Forbidden
+- No purple gradients, no blue-to-purple transitions, no white-only card backgrounds.
+- No emoji icons or generic bank clip-art; use lucide-style SVG line icons only.
+- No decorative looping animations or particle backgrounds.
+
+## Additional Notes
+- All user-visible copy is in English.
+- Hero section uses a single headline, subtitle, and two CTA buttons on a dark navy background with a subtle blue radial glow.
+- Footer contains legal disclaimers, navigation links, and social icons only as text links.

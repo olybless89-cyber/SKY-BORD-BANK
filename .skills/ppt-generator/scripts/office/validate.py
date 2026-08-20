@@ -25,7 +25,6 @@ from validators import RedliningValidator
 
 
 def main():
-    """Parse CLI arguments, run validators with optional auto-repair, and exit with pass/fail status."""
     parser = argparse.ArgumentParser(description="Validate Office document XML files")
     parser.add_argument(
         "path",

@@ -9,7 +9,7 @@ import urllib.error
 import urllib.request
 
 
-ENDPOINT = "https://app-dlavm6ky20ap-api-GYX1lzGw01Xa.gateway.appmedo.com/v1/audio/speech"
+ENDPOINT = "https://app-dptqkburek1u-api-GYX1lzGw01Xa.gateway.appmedo.com/v1/audio/speech"
 
 
 def fail(message):

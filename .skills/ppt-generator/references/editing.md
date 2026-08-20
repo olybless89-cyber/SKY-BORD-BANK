@@ -1,154 +1,154 @@
-# Editing Presentations
+# 编辑演示文稿
 
-## Template-Based Workflow
+## 基于模板的工作流程
 
-When using an existing presentation as a template:
+使用现有演示文稿作为模板时：
 
-1. **Analyze the existing slides**:
+1. **分析现有幻灯片**：
    ```bash
    python -m markitdown template.pptx
    ```
-   Review the markitdown output to understand placeholder text and slide structure.
+   查看 markitdown 输出了解占位符文字和幻灯片结构。
 
-2. **Plan slide mapping**: Choose a template slide for each content section.
+2. **规划幻灯片映射**：为每个内容章节选择一个模板幻灯片。
 
-   ⚠️ **Use varied layouts** — monotony is a common failure mode. Actively look for:
-   - Multi-column layouts (two-column, three-column)
-   - Image + text combinations
-   - Full-bleed images with text overlay
-   - Pull quote or callout slides
-   - Section divider slides
-   - Stat callout slides
-   - Icon grids or icon + text rows
+   ⚠️ **使用多样化布局** — 单调是常见失败模式。主动寻找：
+   - 多列布局（双列、三列）
+   - 图片+文字组合
+   - 全出血图片加文字叠层
+   - 引言或标注幻灯片
+   - 章节分隔页
+   - 数字标注幻灯片
+   - 图标网格或图标+文字行
 
-3. **Unpack**: `python scripts/office/unpack.py template.pptx ./unpacked/`
+3. **解包**：`python scripts/office/unpack.py template.pptx ./unpacked/`
 
-4. **Inventory tables and charts** (do this **before** editing text):
+4. **清查表格和图表**（在编辑文字**之前**执行）：
    ```bash
    grep -rl "a:tbl" ./unpacked/ppt/slides/
    ls ./unpacked/ppt/charts/ 2>/dev/null
    ```
-   Record which slides contain tables and which chart files exist — these all need data replacement.
+   记录哪些幻灯片含有表格、哪些图表文件存在——这些需要替换数据。
 
-5. **Build the presentation structure** (do this yourself, not with subagents):
-   - Delete unwanted slides (remove from `<p:sldIdLst>`)
-   - Duplicate slides to reuse: `python scripts/add_slide.py ./unpacked/ slide2.xml`
-   - Reorder slides in `<p:sldIdLst>`
-   - **Complete all structural changes before Step 6**
+5. **构建演示文稿结构**（自己操作，不用子代理）：
+   - 删除不需要的幻灯片（从 `<p:sldIdLst>` 中移除）
+   - 复制要复用的幻灯片：`python scripts/add_slide.py ./unpacked/ slide2.xml`
+   - 在 `<p:sldIdLst>` 中重新排列幻灯片顺序
+   - **在第 6 步之前完成所有结构性修改**
 
-6. **Edit text content** — if subagents are available, use them here (slides are independent XML files, parallelizable):
-   - Read the slide's XML
-   - Identify **all** placeholder content — text, images, charts, icons, captions
-   - Replace every placeholder with final content
-   - **Use the Edit tool — not sed or Python scripts**
+6. **编辑文字内容** — 如果可用子代理，在此使用（幻灯片是独立的 XML 文件，可并行处理）：
+   - 读取幻灯片的 XML
+   - 识别**所有**占位符内容——文字、图片、图表、图标、说明
+   - 用最终内容替换每个占位符
+   - **使用 Edit 工具，不要用 sed 或 Python 脚本**
 
-7. **Replace table data** (if tables present — see [Table Data Replacement](#table-data-replacement) below)
+7. **替换表格数据**（如有表格——见下方[表格数据替换](#表格数据替换)）
 
-8. **Replace chart data** (if charts present — see [Chart Data Replacement](#chart-data-replacement) below)
+8. **替换图表数据**（如有图表——见下方[图表数据替换](#图表数据替换)）
 
-9. **Clean**: `python scripts/clean.py ./unpacked/`
+9. **清理**：`python scripts/clean.py ./unpacked/`
 
-10. **Pack**: `python scripts/office/pack.py ./unpacked/ ./output.pptx --original template.pptx`
+10. **打包**：`python scripts/office/pack.py ./unpacked/ ./output.pptx --original template.pptx`
 
-11. **Validate**:
+11. **验证**：
     ```bash
-    # XML structure validation (checks whether manual edits broke XML)
+    # XML 结构验证（检查手动编辑是否损坏 XML）
     python scripts/office/validate.py ./output.pptx
 
-    # Content validation (checks for residual template data)
+    # 内容验证（检查是否有残留模板数据）
     python -m markitdown ./output.pptx | grep -iE "steaming|tapai|lorem|ipsum|xxxx|placeholder"
     ```
-    XML validation errors = structural damage from editing; PowerPoint may open abnormally — fix recommended. Content validation matches = template data still present; fix before declaring success. Neither affects file generation itself.
+    XML 验证报错 = 编辑时改坏了结构，PowerPoint 打开可能异常，建议修复。内容验证有匹配 = 模板数据仍存在，修复后再交付。两者均不影响文件本身的生成。
 
 ---
 
-## Script Reference
+## 脚本说明
 
-| Script | Purpose |
+| 脚本 | 用途 |
 |--------|---------|
-| `scripts/office/unpack.py` | Unpack and format PPTX output |
-| `scripts/add_slide.py` | Duplicate a slide or create from layout |
-| `scripts/clean.py` | Remove orphaned files |
-| `scripts/office/pack.py` | Repack and validate |
+| `scripts/office/unpack.py` | 解压并格式化输出 PPTX |
+| `scripts/add_slide.py` | 复制幻灯片或从布局新建 |
+| `scripts/clean.py` | 清理孤立文件 |
+| `scripts/office/pack.py` | 重新打包并验证 |
 
 ---
 
-## Table Data Replacement
+## 表格数据替换
 
-**All previous skills failed here.** This section solves that.
+**所有前代 skill 都在这里失败了。** 本节解决这个问题。
 
-### Find Tables
+### 查找表格
 
-After unpacking, run:
+解包后执行：
 ```bash
 grep -rl "a:tbl" ./unpacked/ppt/slides/
 ```
 
-### Understanding Table Structure
+### 理解表格结构
 
-Tables in PPTX XML look like this:
+PPTX XML 中的表格结构如下：
 ```xml
 <a:tbl>
-  <a:tr>                          <!-- Row -->
-    <a:tc>                        <!-- Cell -->
+  <a:tr>                          <!-- 行 -->
+    <a:tc>                        <!-- 单元格 -->
       <a:txBody>
         <a:p>
           <a:r>
-            <a:t>Cell text</a:t>   <!-- ← Actual content -->
+            <a:t>标题文字</a:t>   <!-- ← 实际内容 -->
           </a:r>
         </a:p>
       </a:txBody>
     </a:tc>
     <a:tc>
-      <a:txBody><a:p><a:r><a:t>Another cell</a:t></a:r></a:p></a:txBody>
+      <a:txBody><a:p><a:r><a:t>另一个单元格</a:t></a:r></a:p></a:txBody>
     </a:tc>
   </a:tr>
 </a:tbl>
 ```
 
-### Replacing Table Content
+### 替换表格内容
 
-For each table cell, use the **Edit tool** to replace text inside `<a:t>`:
+对每个表格单元格，使用 **Edit 工具**替换 `<a:t>` 中的文字：
 
 ```xml
-<!-- Before (template data) -->
+<!-- 替换前（模板数据） -->
 <a:t>Steaming time</a:t>
 
-<!-- After (actual content) -->
-<a:t>Q1 Revenue</a:t>
+<!-- 替换后（实际内容） -->
+<a:t>Q1 营收</a:t>
 ```
 
-**Work row by row**: read the full table XML first, plan all replacements, then execute them one by one. Don't guess — confirm the exact existing text before replacing.
+**逐行操作**：先读取完整的表格 XML，规划好所有替换，再依次执行。不要猜测——替换前确认现有文字的准确内容。
 
-### Multi-Run Cells
+### 多运行段单元格
 
-Some cells have text split across multiple runs:
+部分单元格的文字分散在多个运行段中：
 ```xml
 <a:tc>
   <a:txBody><a:p>
-    <a:r><a:rPr b="1"/><a:t>Bold </a:t></a:r>
-    <a:r><a:t>Regular text</a:t></a:r>
+    <a:r><a:rPr b="1"/><a:t>加粗 </a:t></a:r>
+    <a:r><a:t>常规文字</a:t></a:r>
   </a:p></a:txBody>
 </a:tc>
 ```
-You can replace each `<a:t>` value individually, or merge into a single run if formatting doesn't matter.
+可以逐个替换 `<a:t>` 的值，或在格式不重要时合并为一个运行段。
 
 ---
 
-## Chart Data Replacement
+## 图表数据替换
 
-Chart files are located at `./unpacked/ppt/charts/chartN.xml`.
+图表文件位于 `./unpacked/ppt/charts/chartN.xml`。
 
-### Understanding Chart Structure
+### 理解图表结构
 
 ```xml
 <c:chartSpace>
   <c:chart>
     <c:plotArea>
       <c:barChart>
-        <c:ser>                              <!-- One data series -->
-          <c:tx><c:strRef>...</c:strRef></c:tx>   <!-- Series name -->
-          <c:cat>                            <!-- Category labels (X axis) -->
+        <c:ser>                              <!-- 一个数据系列 -->
+          <c:tx><c:strRef>...</c:strRef></c:tx>   <!-- 系列名称 -->
+          <c:cat>                            <!-- 类别标签（X轴） -->
             <c:strRef>
               <c:strCache>
                 <c:ptCount val="4"/>
@@ -159,7 +159,7 @@ Chart files are located at `./unpacked/ppt/charts/chartN.xml`.
               </c:strCache>
             </c:strRef>
           </c:cat>
-          <c:val>                            <!-- Data values (Y axis) -->
+          <c:val>                            <!-- 数据值（Y轴） -->
             <c:numRef>
               <c:numCache>
                 <c:ptCount val="4"/>
@@ -177,86 +177,86 @@ Chart files are located at `./unpacked/ppt/charts/chartN.xml`.
 </c:chartSpace>
 ```
 
-### Replacing Chart Data
+### 替换图表数据
 
-1. Read the chart XML
-2. Replace `<c:v>` values inside `<c:cat>` (labels) and `<c:val>` (numbers)
-3. If changing the number of data points, update `<c:ptCount val="N"/>` and adjust `idx` attributes
+1. 读取图表 XML
+2. 替换 `<c:cat>`（标签）和 `<c:val>`（数值）中的 `<c:v>` 值
+3. 如需更改数据点数量，更新 `<c:ptCount val="N"/>` 并调整 `idx` 属性
 
-**Use the Edit tool** — replace specific `<c:v>` content rather than rewriting entire sections.
+**使用 Edit 工具** — 替换具体的 `<c:v>` 内容，而不是重写整个章节。
 
-### After Replacing Chart Data
+### 替换图表数据后
 
-Chart XML also contains cached cell references like `<c:f>Sheet1!$A$2:$A$5</c:f>`. No need to update these — if there is no embedded workbook, PowerPoint reads directly from `<c:strCache>` / `<c:numCache>`.
-
----
-
-## Editing Content (Text)
-
-**Subagents**: Use after completing Step 5. Each slide is an independent XML file — subagents can edit them in parallel. Prompts to subagents must include:
-- The file path of the slide to edit
-- **"Use the Edit tool for all changes"**
-- The format rules and common pitfalls below
-
-For each slide:
-1. Read the slide's XML
-2. Identify **all** placeholder content — text, images, charts, icons, captions
-3. Replace every placeholder with final content
-
-**Use the Edit tool — not sed or Python scripts.**
-
-### Format Rules
-
-- **Bold all titles, subheadings, and inline labels**: set `b="1"` on `<a:rPr>`
-- **No Unicode bullets (•)**: use `<a:buChar>` or `<a:buAutoNum>`
-- **Bullet consistency**: let bullets inherit from the layout
+图表 XML 中还包含缓存的单元格引用，如 `<c:f>Sheet1!$A$2:$A$5</c:f>`。无需更新这些——如果没有内嵌的工作簿，PowerPoint 会直接从 `<c:strCache>` / `<c:numCache>` 读取。
 
 ---
 
-## Common Pitfalls
+## 编辑内容（文字）
 
-### Template Adaptation
+**子代理**：完成第 5 步后使用。每张幻灯片是独立的 XML 文件，子代理可以并行编辑。给子代理的提示中需包含：
+- 要编辑的幻灯片文件路径
+- **"所有修改使用 Edit 工具"**
+- 下方的格式规则和常见陷阱
 
-When source content has fewer items than the template:
-- **Fully delete excess elements** (images, shapes, text boxes) — don't just clear the text
-- After clearing text, check for orphaned visual elements
-- Do a visual QA pass to catch count mismatches
+对每张幻灯片：
+1. 读取幻灯片的 XML
+2. 识别**所有**占位符内容——文字、图片、图表、图标、说明
+3. 用最终内容替换每个占位符
 
-When replacing text with content of different length:
-- **Shorter replacements**: generally safe
-- **Longer replacements**: may overflow — verify with visual QA
+**使用 Edit 工具，不要用 sed 或 Python 脚本。**
 
-**Template slots ≠ source item count**: If the template has 4 team members but the source has only 3, delete the complete group for the 4th member (image + text box).
+### 格式规则
 
-### Multi-Item Content
+- **所有标题、小标题和行内标签加粗**：在 `<a:rPr>` 上设置 `b="1"`
+- **不使用 Unicode 项目符号（•）**：使用 `<a:buChar>` 或 `<a:buAutoNum>`
+- **项目符号一致性**：让项目符号从布局继承
 
-Create a separate `<a:p>` element for each item — don't concatenate into a single string.
+---
+
+## 常见陷阱
+
+### 模板适配
+
+当源内容的条目少于模板时：
+- **完整删除多余元素**（图片、形状、文本框），不能只清空文字
+- 清空文字内容后检查是否有孤立的视觉元素
+- 进行视觉 QA，发现数量不匹配的情况
+
+当用不同长度的内容替换文字时：
+- **较短的替换**：通常安全
+- **较长的替换**：可能溢出——用视觉 QA 检验
+
+**模板位置 ≠ 源条目数**：如果模板有 4 个团队成员但源只有 3 个，删除第 4 个成员的完整分组（图片 + 文本框）。
+
+### 多条目内容
+
+每个条目创建独立的 `<a:p>` 元素——不要拼接成一个字符串。
 
 ```xml
-<!-- ❌ Wrong -->
-<a:p><a:r><a:t>Step one: do X. Step two: do Y.</a:t></a:r></a:p>
+<!-- ❌ 错误 -->
+<a:p><a:r><a:t>步骤一：执行X。步骤二：执行Y。</a:t></a:r></a:p>
 
-<!-- ✅ Correct -->
+<!-- ✅ 正确 -->
 <a:p><a:pPr algn="l"><a:lnSpc><a:spcPts val="3919"/></a:lnSpc></a:pPr>
-  <a:r><a:rPr b="1"/><a:t>Step one</a:t></a:r>
+  <a:r><a:rPr b="1"/><a:t>步骤一</a:t></a:r>
 </a:p>
 <a:p><a:pPr algn="l"><a:lnSpc><a:spcPts val="3919"/></a:lnSpc></a:pPr>
-  <a:r><a:t>Execute X.</a:t></a:r>
+  <a:r><a:t>执行X。</a:t></a:r>
 </a:p>
 ```
 
-### Smart Quotes
+### 智能引号
 
-Handled automatically during unpack/pack. When adding new text containing quotes, use XML entities:
+解包/打包时自动处理。添加包含引号的新文字时，使用 XML 实体：
 
-| Character | XML Entity |
+| 字符 | XML 实体 |
 |-----------|------------|
-| `"` (left double quote) | `&#x201C;` |
-| `"` (right double quote) | `&#x201D;` |
-| `'` (left single quote) | `&#x2018;` |
-| `'` (right single quote) | `&#x2019;` |
+| `"` （左双引号） | `&#x201C;` |
+| `"` （右双引号） | `&#x201D;` |
+| `'` （左单引号） | `&#x2018;` |
+| `'` （右单引号） | `&#x2019;` |
 
-### Other Notes
+### 其他注意事项
 
-- **Whitespace**: Use `xml:space="preserve"` on `<a:t>` when there are leading/trailing spaces
-- **XML parsing**: Use `defusedxml.minidom`, not `xml.etree.ElementTree` (which destroys namespaces)
+- **空白字符**：有前导/尾随空格时，在 `<a:t>` 上使用 `xml:space="preserve"`
+- **XML 解析**：使用 `defusedxml.minidom`，不要用 `xml.etree.ElementTree`（会破坏命名空间）

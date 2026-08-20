@@ -1,21 +1,28 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { routes } from '@/routes';
 
 interface RouteGuardProps {
   children: React.ReactNode;
 }
 
-// All paths that do NOT require authentication
-const PUBLIC_PATHS = [
-  '/', '/login', '/register', '/investment', '/credit-cards', '/contact',
-  '/digital-banking', '/mobile-web-banking', '/insurance-policies',
-  '/home-property-loan', '/all-bank-accounts', '/borrowing-account',
-  '/private-banking', '/fixed-term-account', '/404',
-];
+// System-level public routes (no need to register in routes.tsx)
+const SYSTEM_PUBLIC_ROUTES = ['/login', '/403', '/404'];
 
-function isPublicPath(path: string): boolean {
-  return PUBLIC_PATHS.includes(path);
+// Derived from routes.tsx: all routes marked with public: true
+const routePublicPaths = routes.filter(r => r.public).map(r => r.path);
+
+const PUBLIC_ROUTES = [...SYSTEM_PUBLIC_ROUTES, ...routePublicPaths];
+
+function matchPublicRoute(path: string, patterns: string[]) {
+  return patterns.some(pattern => {
+    if (pattern.includes('*')) {
+      const regex = new RegExp('^' + pattern.replace('*', '.*') + '$');
+      return regex.test(path);
+    }
+    return path === pattern;
+  });
 }
 
 export function RouteGuard({ children }: RouteGuardProps) {
@@ -25,20 +32,18 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
   useEffect(() => {
     if (loading) return;
-    if (!user && !isPublicPath(location.pathname)) {
+
+    const isPublic = matchPublicRoute(location.pathname, PUBLIC_ROUTES);
+
+    if (!user && !isPublic) {
       navigate('/login', { state: { from: location.pathname }, replace: true });
     }
   }, [user, loading, location.pathname, navigate]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-            <div className="w-6 h-6 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-          </div>
-          <p className="text-muted-foreground text-sm">Loading SKY-BORD BANK...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }

@@ -4,7 +4,7 @@
 
 | Property | Value |
 |----------|-------|
-| Endpoint | `POST https://app-dlavm6ky20ap-api-qYGWo8XA7JVY.gateway.appmedo.com/v1/videos/text2video` |
+| Endpoint | `POST https://app-dptqkburek1u-api-qYGWo8XA7JVY.gateway.appmedo.com/v1/videos/text2video` |
 | HTTP Method | `POST` |
 | Request Header Content-Type | `application/json` |
 | Auth Header | `X-Gateway-Authorization: Bearer <AUTH_VALUE>` |
@@ -142,7 +142,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    "https://app-dlavm6ky20ap-api-qYGWo8XA7JVY.gateway.appmedo.com/v1/videos/text2video",
+    "https://app-dptqkburek1u-api-qYGWo8XA7JVY.gateway.appmedo.com/v1/videos/text2video",
     {
       method: "POST",
       headers: {

@@ -11,7 +11,7 @@ Submit a video-generation task that animates a static image. The API accepts a r
 
 | Property | Value |
 |----------|-------|
-| **Endpoint** | `POST https://app-dlavm6ky20ap-api-eLMlJj3KJD89.gateway.appmedo.com/v1/videos/image2video` |
+| **Endpoint** | `POST https://app-dptqkburek1u-api-eLMlJj3KJD89.gateway.appmedo.com/v1/videos/image2video` |
 | **Content-Type** | `application/json` |
 | **Auth** | `X-Gateway-Authorization: Bearer ${INTEGRATIONS_API_KEY}` |
 
@@ -139,7 +139,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    "https://app-dlavm6ky20ap-api-eLMlJj3KJD89.gateway.appmedo.com/v1/videos/image2video",
+    "https://app-dptqkburek1u-api-eLMlJj3KJD89.gateway.appmedo.com/v1/videos/image2video",
     {
       method: "POST",
       headers: {

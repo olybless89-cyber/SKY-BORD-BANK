@@ -4,7 +4,7 @@
 
 | Item | Details |
 |------|---------|
-| Endpoint | `POST https://app-dlavm6ky20ap-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations` |
+| Endpoint | `POST https://app-dptqkburek1u-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations` |
 | Function | Submit an image generation task; supports text-to-image and image-to-image. Returns a `task_id` for subsequent polling. |
 | Note | Submits the generation task; this call is billed |
 
@@ -40,40 +40,21 @@
 
 ## Generation-Time Usage (Agent Direct Call)
 
-```typescript
-const apiKey = process.env["INTEGRATIONS_API_KEY"]!;
+Use the built-in script for generation-time calls — do not hand-write TypeScript request code. Bash tool timeout must be set to `600000` ms.
 
-async function createImageTask(params: {
-  prompt: string;
-  model_name?: string;
-  negative_prompt?: string;
-  image?: string;
-  image_fidelity?: number;
-  element_list?: Array<{ element_id: number }>;
-  resolution?: string;
-  n?: number;
-  aspect_ratio?: string;
-  watermark_info?: { enabled: boolean };
-  callback_url?: string;
-  external_task_id?: string;
-}): Promise<{ task_id: string; task_status: string }> {
-  const response = await fetch(
-    "https://app-dlavm6ky20ap-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Gateway-Authorization": `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(params),
-    }
-  );
-  if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-  const json = await response.json();
-  if (json.code !== 0) throw new Error(`API error ${json.code}: ${json.message}`);
-  return json.data;
-}
+```bash
+python3 <skill-path>/scripts/generate_image.py \
+  --prompt "..." \
+  [--negative-prompt "..."] \
+  [--image /path/ref.jpg | --image-url "https://..."] \
+  [--model kling-v2] \
+  [--aspect-ratio 16:9] \
+  [--image-fidelity 0.5] \
+  [-n 1] \
+  [--output-dir /tmp/out]
 ```
+
+The script submits the task, polls until it succeeds/fails/exceeds the safe time limit, and prints one JSON line to stdout: `{"status":"succeed","task_id":"...","images":[{"url":"...","file":"..."}]}` or `{"status":"processing","task_id":"..."}`. On failure it prints an error to stderr and exits with a non-zero code.
 
 ## Post-Generation Usage (Edge Function)
 
@@ -148,7 +129,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    "https://app-dlavm6ky20ap-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations",
+    "https://app-dptqkburek1u-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations",
     {
       method: "POST",
       headers: {

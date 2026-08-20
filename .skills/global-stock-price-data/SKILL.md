@@ -18,7 +18,7 @@ Query real-time and historical stock market data, financial news, and entity sea
 | Finance & Market News | GET | `api-AalZze1qEWML` |
 | Entity Search | GET | `api-Xa6JZq205MNa` |
 
-Base host: `app-dlavm6ky20ap-api-oYA6Z8wDBN1a.gateway.appmedo.com`
+Base host: `app-dptqkburek1u-api-oYA6Z8wDBN1a.gateway.appmedo.com`
 
 **Authentication:** All endpoints require `api_token` as a query parameter (user-managed key). In Edge Function deployments, the key is retrieved via `Deno.env.get("INTEGRATIONS_API_KEY")` and passed as `X-Gateway-Authorization: Bearer ${apiKey}` header to the upstream gateway.
 

@@ -4,7 +4,7 @@
 
 | Property | Value |
 |----------|-------|
-| Endpoint | `GET https://app-dlavm6ky20ap-api-oLpZ7eD5j2Pa.gateway.appmedo.com/v1/videos/text2video/{id}` |
+| Endpoint | `GET https://app-dptqkburek1u-api-oLpZ7eD5j2Pa.gateway.appmedo.com/v1/videos/text2video/{id}` |
 | HTTP Method | `GET` |
 | Request Header Content-Type | `application/json` |
 | Auth Header | `X-Gateway-Authorization: Bearer <AUTH_VALUE>` |
@@ -159,7 +159,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    `https://app-dlavm6ky20ap-api-oLpZ7eD5j2Pa.gateway.appmedo.com/v1/videos/text2video/${encodeURIComponent(taskId)}`,
+    `https://app-dptqkburek1u-api-oLpZ7eD5j2Pa.gateway.appmedo.com/v1/videos/text2video/${encodeURIComponent(taskId)}`,
     {
       method: "GET",
       headers: {

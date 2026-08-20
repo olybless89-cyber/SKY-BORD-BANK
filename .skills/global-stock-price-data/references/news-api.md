@@ -1,6 +1,6 @@
 # Finance & Market News API
 
-**Endpoint:** `GET https://app-dlavm6ky20ap-api-AalZze1qEWML.gateway.appmedo.com/v1/news/all`
+**Endpoint:** `GET https://app-dptqkburek1u-api-AalZze1qEWML.gateway.appmedo.com/v1/news/all`
 
 Retrieve the latest global financial news with entity recognition and sentiment analysis. Filter by stock symbols, industries, countries, sentiment score, keywords, language, and date range.
 
@@ -114,7 +114,7 @@ async function getFinanceNews(params: NewsParams = {}): Promise<NewsResponse> {
   if (params.page !== undefined)  query.set("page", String(params.page));
 
   const response = await fetch(
-    `https://app-dlavm6ky20ap-api-AalZze1qEWML.gateway.appmedo.com/v1/news/all?${query.toString()}`,
+    `https://app-dptqkburek1u-api-AalZze1qEWML.gateway.appmedo.com/v1/news/all?${query.toString()}`,
     { method: "GET", headers: { "Accept": "application/json" } }
   );
 
@@ -176,7 +176,7 @@ serve(async (req: Request): Promise<Response> => {
   const query = new URLSearchParams(params);
 
   const upstream = await fetch(
-    `https://app-dlavm6ky20ap-api-AalZze1qEWML.gateway.appmedo.com/v1/news/all?${query.toString()}`,
+    `https://app-dptqkburek1u-api-AalZze1qEWML.gateway.appmedo.com/v1/news/all?${query.toString()}`,
     {
       method: "GET",
       headers: {

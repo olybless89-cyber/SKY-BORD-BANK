@@ -1,16 +1,16 @@
-# PptxGenJS Reference
+# PptxGenJS 教程
 
-> This file is an API quick reference. For layout pitfalls, overlap/overflow fixes, and chart bugs, see [pitfalls.md](pitfalls.md) — required reading before writing any JavaScript.
+> 本文件是 API 速查参考。注意，各种有关布局陷阱、重叠/溢出修复、图表 Bug 见 [pitfalls.md](pitfalls.md)，这是你在撰写js文件之前的必读文档。
 
-## Basic Setup & Structure
+## 基础设置与结构
 
 ```javascript
 const pptxgen = require("pptxgenjs");
 
 let pres = new pptxgen();
-pres.layout = 'LAYOUT_16x9';  // or 'LAYOUT_16x10', 'LAYOUT_4x3', 'LAYOUT_WIDE'
-pres.author = 'Author Name';
-pres.title = 'Presentation Title';
+pres.layout = 'LAYOUT_16x9';  // 或 'LAYOUT_16x10', 'LAYOUT_4x3', 'LAYOUT_WIDE'
+pres.author = '作者姓名';
+pres.title = '演示文稿标题';
 
 let slide = pres.addSlide();
 slide.addText("Hello World!", { x: 0.5, y: 0.5, fontSize: 36, color: "363636" });
@@ -18,76 +18,76 @@ slide.addText("Hello World!", { x: 0.5, y: 0.5, fontSize: 36, color: "363636" })
 pres.writeFile({ fileName: "Presentation.pptx" });
 ```
 
-## Layout Dimensions
+## 布局尺寸
 
-Slide dimensions (coordinates in inches):
-- `LAYOUT_16x9`: 10" × 5.625" (default)
-- `LAYOUT_16x10`: 10" × 6.25"
-- `LAYOUT_4x3`: 10" × 7.5"
-- `LAYOUT_WIDE`: 13.3" × 7.5"
+幻灯片尺寸（坐标单位为英寸）：
+- `LAYOUT_16x9`：10" × 5.625"（默认）
+- `LAYOUT_16x10`：10" × 6.25"
+- `LAYOUT_4x3`：10" × 7.5"
+- `LAYOUT_WIDE`：13.3" × 7.5"
 
 ---
 
-## Text & Formatting
+## 文字与格式
 
 ```javascript
-// Basic text
-slide.addText("Simple text", {
+// 基础文字
+slide.addText("简单文字", {
   x: 1, y: 1, w: 8, h: 2, fontSize: 24, fontFace: "Arial",
   color: "363636", bold: true, align: "center", valign: "middle"
 });
 
-// Character spacing (use charSpacing — letterSpacing is silently ignored)
-slide.addText("Spaced text", { x: 1, y: 1, w: 8, h: 1, charSpacing: 6 });
+// 字符间距（使用 charSpacing，letterSpacing 会被静默忽略）
+slide.addText("间距文字", { x: 1, y: 1, w: 8, h: 1, charSpacing: 6 });
 
-// Rich text array
+// 富文本数组
 slide.addText([
-  { text: "Bold ", options: { bold: true } },
-  { text: "Italic ", options: { italic: true } }
+  { text: "加粗 ", options: { bold: true } },
+  { text: "斜体 ", options: { italic: true } }
 ], { x: 1, y: 3, w: 8, h: 1 });
 
-// Multi-line text (requires breakLine: true)
+// 多行文字（需要 breakLine: true）
 slide.addText([
-  { text: "Line one", options: { breakLine: true } },
-  { text: "Line two", options: { breakLine: true } },
-  { text: "Line three" }
+  { text: "第一行", options: { breakLine: true } },
+  { text: "第二行", options: { breakLine: true } },
+  { text: "第三行" }
 ], { x: 0.5, y: 0.5, w: 8, h: 2 });
 
-// Text box padding
-slide.addText("Heading", {
+// 文本框内边距
+slide.addText("标题", {
   x: 0.5, y: 0.3, w: 9, h: 0.6,
-  margin: 0  // Set to 0 when precise alignment with shapes or icons is needed
+  margin: 0  // 需要与形状或图标精确对齐时设为 0
 });
 
-// Prevent text wrapping: use shrinkText for fixed labels, autoFit for paragraphs (see pitfalls.md)
-slide.addText("Label", { x: 0.5, y: 1, w: 3, h: 0.4, fontSize: 12, shrinkText: true });
+// 防止文字换行：固定标签用 shrinkText，段落用 autoFit（详见 pitfalls.md）
+slide.addText("标签", { x: 0.5, y: 1, w: 3, h: 0.4, fontSize: 12, shrinkText: true });
 ```
 
-**Tip:** Text boxes have default padding. Set `margin: 0` when you need text to align precisely with shapes, lines, or icons at the same x position.
+**提示：** 文本框默认有内边距。需要文字与形状、线条或图标在同一 x 位置精确对齐时，设置 `margin: 0`。
 
 ---
 
-## Lists & Bullets
+## 列表与项目符号
 
 ```javascript
-// ✅ Correct: multiple bullets
+// ✅ 正确：多个项目符号
 slide.addText([
-  { text: "First item", options: { bullet: true, breakLine: true } },
-  { text: "Second item", options: { bullet: true, breakLine: true } },
-  { text: "Third item", options: { bullet: true } }
+  { text: "第一项", options: { bullet: true, breakLine: true } },
+  { text: "第二项", options: { bullet: true, breakLine: true } },
+  { text: "第三项", options: { bullet: true } }
 ], { x: 0.5, y: 0.5, w: 8, h: 3 });
 
-// ❌ Wrong: don't use Unicode bullets
-slide.addText("• First item", { ... });  // produces double bullets
+// ❌ 错误：不要使用 Unicode 项目符号
+slide.addText("• 第一项", { ... });  // 会产生双重项目符号
 
-// Sub-items and numbered lists
-{ text: "Sub-item", options: { bullet: true, indentLevel: 1 } }
-{ text: "First", options: { bullet: { type: "number" }, breakLine: true } }
+// 子项和编号列表
+{ text: "子项", options: { bullet: true, indentLevel: 1 } }
+{ text: "第一", options: { bullet: { type: "number" }, breakLine: true } }
 ```
 
 ---
 
-## Shapes
+## 形状
 
 ```javascript
 slide.addShape(pres.shapes.RECTANGLE, {
@@ -101,19 +101,19 @@ slide.addShape(pres.shapes.LINE, {
   x: 1, y: 3, w: 5, h: 0, line: { color: "FF0000", width: 3, dashType: "dash" }
 });
 
-// With transparency
+// 带透明度
 slide.addShape(pres.shapes.RECTANGLE, {
   x: 1, y: 1, w: 3, h: 2,
   fill: { color: "0088CC", transparency: 50 }
 });
 
-// Rounded rectangle (⚠️ don't stack with accent borders, see pitfalls.md)
+// 圆角矩形（⚠️ 不要与强调边框叠加，详见 pitfalls.md）
 slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
   x: 1, y: 1, w: 3, h: 2,
   fill: { color: "FFFFFF" }, rectRadius: 0.1
 });
 
-// With shadow (offset must be non-negative, otherwise corrupts file)
+// 带阴影（offset 必须为非负数，否则损坏文件）
 slide.addShape(pres.shapes.RECTANGLE, {
   x: 1, y: 1, w: 3, h: 2,
   fill: { color: "FFFFFF" },
@@ -121,86 +121,88 @@ slide.addShape(pres.shapes.RECTANGLE, {
 });
 ```
 
-Shadow parameter reference:
+阴影参数说明：
 
-| Property | Type | Range | Notes |
+| 属性 | 类型 | 范围 | 备注 |
 |----------|------|-------|-------|
-| `type` | string | `"outer"`, `"inner"` | |
-| `color` | string | 6-digit hex (e.g. `"000000"`) | No `#` prefix, no 8-digit hex — see common pitfalls |
-| `blur` | number | 0-100 pt | |
-| `offset` | number | 0-200 pt | **Must be non-negative** — negative values corrupt the file |
-| `angle` | number | 0-359 degrees | Shadow cast direction (135 = bottom-right, 270 = upward) |
-| `opacity` | number | 0.0-1.0 | Use this property to control opacity, not encoded in the color string |
+| `type` | 字符串 | `"outer"`、`"inner"` | |
+| `color` | 字符串 | 6位十六进制（如 `"000000"`） | 不加 `#` 前缀，不用 8 位十六进制——见常见陷阱 |
+| `blur` | 数字 | 0-100 pt | |
+| `offset` | 数字 | 0-200 pt | **必须为非负数**——负值会损坏文件 |
+| `angle` | 数字 | 0-359 度 | 阴影投射方向（135 = 右下，270 = 向上） |
+| `opacity` | 数字 | 0.0-1.0 | 用此属性控制透明度，不要编码在颜色字符串中 |
 
-For upward shadows (e.g. bottom bar), use `angle: 270` with a positive offset — **never** use a negative offset.
+向上投影阴影（如底部栏）时，使用 `angle: 270` 加正数 offset——**不要**用负数 offset。
 
-**Note**: Gradient fills are not natively supported. For gradients, use a gradient image as the background.
+**注意**：不原生支持渐变填充。需要渐变时，用渐变图片作为背景。
 
 ---
 
-## Images
+## 图片
 
-### Image Sources
+### 图片来源
 
 ```javascript
-// From file path
+// 来自文件路径
 slide.addImage({ path: "images/chart.png", x: 1, y: 1, w: 5, h: 3 });
 
-// From URL
+// 来自 URL
 slide.addImage({ path: "https://example.com/image.jpg", x: 1, y: 1, w: 5, h: 3 });
 
-// From base64 (faster, no file I/O)
+// 来自 base64（更快，无文件 I/O）
 slide.addImage({ data: "image/png;base64,iVBORw0KGgo...", x: 1, y: 1, w: 5, h: 3 });
 ```
 
-### Image Options
+### 图片选项
 
 ```javascript
 slide.addImage({
   path: "image.png",
   x: 1, y: 1, w: 5, h: 3,
-  rotate: 45,              // 0-359 degrees
-  rounding: true,          // Circular crop
+  rotate: 45,              // 0-359 度
+  rounding: true,          // 圆形裁剪
   transparency: 50,        // 0-100
-  flipH: true,             // Horizontal flip
-  flipV: false,            // Vertical flip
-  altText: "Descriptive text",  // Accessibility
+  flipH: true,             // 水平翻转
+  flipV: false,            // 垂直翻转
+  altText: "描述文字",      // 无障碍
   hyperlink: { url: "https://example.com" }
 });
 ```
 
-### Sizing Modes
+### 图片尺寸模式
 
 ```javascript
-// Contain — fit container, preserve aspect ratio
+// 包含——适应容器，保持比例
 { sizing: { type: 'contain', w: 4, h: 3 } }
 
-// Cover — fill area, preserve aspect ratio (may crop)
+// 覆盖——填满区域，保持比例（可能裁剪）
 { sizing: { type: 'cover', w: 4, h: 3 } }
 
-// Crop — extract specific portion
+// 裁剪——截取特定部分
 { sizing: { type: 'crop', x: 0.5, y: 0.5, w: 2, h: 2 } }
 ```
 
-### Supported Formats
+### 支持格式
 
-- **Standard formats**: PNG, JPG, GIF (animated GIF works in Microsoft 365)
-- **SVG**: works in modern PowerPoint/Microsoft 365
+- **标准格式**：PNG、JPG、GIF（动态 GIF 在 Microsoft 365 中有效）
+- **SVG**：在现代 PowerPoint/Microsoft 365 中有效
 
-**Preserving aspect ratio:**
+**保持宽高比：**
 ```javascript
 const origWidth = 1978, origHeight = 923, maxHeight = 3.0;
 const calcWidth = maxHeight * (origWidth / origHeight);
 slide.addImage({ path: "image.png", x: (10 - calcWidth) / 2, y: 1.2, w: calcWidth, h: maxHeight });
 ```
 
+支持格式：PNG、JPG、GIF、SVG（现代 PowerPoint）。
+
 ---
 
-## Icons
+## 图标
 
-Use react-icons to generate SVG icons, then rasterize to PNG for compatibility.
+使用 react-icons 生成 SVG 图标，再光栅化为 PNG 以确保兼容性。
 
-### Installation
+### 安装
 
 ```bash
 npm install react-icons react react-dom sharp
@@ -225,22 +227,22 @@ async function iconToBase64Png(IconComponent, color, size = 256) {
 }
 ```
 
-### Adding Icons to Slides
+### 添加图标到幻灯片
 
 ```javascript
 const iconData = await iconToBase64Png(FaCheckCircle, "#4472C4", 256);
 
 slide.addImage({
   data: iconData,
-  x: 1, y: 1, w: 0.5, h: 0.5  // inches
+  x: 1, y: 1, w: 0.5, h: 0.5  // 单位英寸
 });
 ```
 
-**Note**: Use a `size` of 256 or higher for crisp icons. `size` controls the rasterization resolution, not the display size on the slide (display size is controlled by the `w` and `h` inch values).
+**注意**：使用 256 或更高的 size 参数可获得清晰图标。size 控制光栅化分辨率，而非幻灯片上的显示大小（显示大小由 `w` 和 `h` 的英寸值决定）。
 
-### Icon Libraries
+### 图标库
 
-Commonly used icon sets in react-icons:
+react-icons 中常用图标集：
 - `react-icons/fa` — Font Awesome
 - `react-icons/md` — Material Design
 - `react-icons/hi` — Heroicons
@@ -248,7 +250,7 @@ Commonly used icon sets in react-icons:
 
 ---
 
-## Slide Backgrounds
+## 幻灯片背景
 
 ```javascript
 slide.background = { color: "F1F1F1" };
@@ -258,56 +260,56 @@ slide.background = { data: "image/png;base64,iVBORw0KGgo..." };
 
 ---
 
-## Tables
+## 表格
 
 ```javascript
 slide.addTable([
-  ["Header 1", "Header 2"],
-  ["Cell 1", "Cell 2"]
+  ["标题1", "标题2"],
+  ["单元格1", "单元格2"]
 ], {
   x: 0.5, y: 1.2, w: 9,
-  rowH: 0.28,           // Required — without this, many rows overflow the page (see pitfalls.md)
-  colW: [4.5, 4.5],     // Must sum to equal w
+  rowH: 0.28,           // 必须传，否则行数多时溢出页面（详见 pitfalls.md）
+  colW: [4.5, 4.5],     // 各列宽之和必须等于 w
   fontSize: 10,
   border: { pt: 0.5, color: "E2E8F0" },
   fill: { color: "F8FAFC" }
 });
 
-// Advanced usage (with merged cells)
+// 高级用法（含合并单元格）
 let tableData = [
-  [{ text: "Header", options: { fill: { color: "6699CC" }, color: "FFFFFF", bold: true } }, "Cell"],
-  [{ text: "Merged", options: { colspan: 2 } }]
+  [{ text: "标题", options: { fill: { color: "6699CC" }, color: "FFFFFF", bold: true } }, "单元格"],
+  [{ text: "合并", options: { colspan: 2 } }]
 ];
 slide.addTable(tableData, { x: 1, y: 3.5, w: 8, colW: [4, 4] });
 ```
 
 ---
 
-## Charts
+## 图表
 
 ```javascript
-// Bar chart
+// 条形图
 slide.addChart(pres.charts.BAR, [{
-  name: "Sales", labels: ["Q1", "Q2", "Q3", "Q4"], values: [4500, 5500, 6200, 7100]
+  name: "销售额", labels: ["Q1", "Q2", "Q3", "Q4"], values: [4500, 5500, 6200, 7100]
 }], { x: 0.5, y: 0.6, w: 6, h: 3, barDir: 'col' });
 
-// Line chart (showPoint is off by default, must be explicitly enabled, see pitfalls.md)
+// 折线图（showPoint 默认关闭，必须显式开启，详见 pitfalls.md）
 slide.addChart(pres.charts.LINE, [{
-  name: "Trend", labels: ["Jan", "Feb", "Mar"], values: [32, 35, 42]
+  name: "趋势", labels: ["一月", "二月", "三月"], values: [32, 35, 42]
 }], { x: 0.5, y: 1, w: 9, h: 3.8, lineSize: 3, lineSmooth: true, showPoint: true });
 
-// Pie chart (no 0 values, keep w:h at 1:1, see pitfalls.md)
+// 饼图（values 中不能有 0，w:h 保持 1:1，详见 pitfalls.md）
 slide.addChart(pres.charts.PIE, [{
-  name: "Share", labels: ["A", "B", "Other"], values: [35, 45, 20]
+  name: "占比", labels: ["A", "B", "其他"], values: [35, 45, 20]
 }], { x: 2.5, y: 1, w: 4.5, h: 4.5, showPercent: true });
 
-// Scatter chart (must use {x,y} object format, see pitfalls.md)
+// 散点图（必须用 {x,y} 对象格式，详见 pitfalls.md）
 slide.addChart(pres.charts.SCATTER, [{
-  name: "Series 1", values: [{ x: 1, y: 10 }, { x: 2, y: 25 }, { x: 3, y: 18 }]
+  name: "系列1", values: [{ x: 1, y: 10 }, { x: 2, y: 25 }, { x: 3, y: 18 }]
 }], { x: 0.5, y: 1, w: 9, h: 4, lineSize: 0, showPoint: true });
 ```
 
-### Modern Chart Styles
+### 现代图表样式
 
 ```javascript
 slide.addChart(pres.charts.BAR, chartData, {
@@ -321,11 +323,11 @@ slide.addChart(pres.charts.BAR, chartData, {
 });
 ```
 
-Key style options: `chartColors`, `chartArea`, `catGridLine/valGridLine`, `lineSmooth`, `legendPos` ("b"/"t"/"l"/"r"/"tr").
+关键样式选项：`chartColors`、`chartArea`、`catGridLine/valGridLine`、`lineSmooth`、`legendPos`（"b"/"t"/"l"/"r"/"tr"）。
 
 ---
 
-## Slide Masters
+## 幻灯片母版
 
 ```javascript
 pres.defineSlideMaster({
@@ -336,48 +338,48 @@ pres.defineSlideMaster({
 });
 
 let titleSlide = pres.addSlide({ masterName: "TITLE_SLIDE" });
-titleSlide.addText("My Title", { placeholder: "title" });
+titleSlide.addText("我的标题", { placeholder: "title" });
 ```
 
 ---
 
-## Common Pitfalls (API Level)
+## 常见陷阱（API 层）
 
-For more visual/layout issues see [pitfalls.md](pitfalls.md).
+更多视觉/布局类问题见 [pitfalls.md](pitfalls.md)。
 
-1. **Colors must not have `#` prefix** — `"FF0000"` ✅ / `"#FF0000"` ❌ (corrupts file)
-2. **Never encode opacity in 8-digit color values** — use the `opacity` property instead
-3. **Use `bullet: true` for bullets** — not Unicode `•` (causes double bullets)
-4. **Use `breakLine: true`** to separate array items for multi-line text
-5. **Use `paraSpaceAfter` for bullet spacing** — `lineSpacing` produces too much space
-6. **Use a fresh instance per presentation** — do not reuse the `pptxgen()` object
-7. **Never reuse options objects across calls** — PptxGenJS mutates objects in place (e.g. converts shadow values to EMU). Sharing the same object across calls corrupts the second shape.
+1. **颜色不得有 `#` 前缀** — `"FF0000"` ✅ / `"#FF0000"` ❌（损坏文件）
+2. **不得用 8 位颜色编码透明度** — 改用 `opacity` 属性
+3. **项目符号用 `bullet: true`** — 不要用 Unicode `•`（双重符号）
+4. **多行文字用 `breakLine: true`** 分隔数组项
+5. **项目符号间距用 `paraSpaceAfter`** — `lineSpacing` 会产生过大间距
+6. **每次演示使用新实例** — 不要复用 `pptxgen()` 对象
+7. **不得跨调用复用 options 对象** — PptxGenJS 就地修改对象（如将阴影值转换为 EMU）。多次调用共享同一对象会损坏第二个形状。
    ```javascript
    const shadow = { type: "outer", blur: 6, offset: 2, color: "000000", opacity: 0.15 };
-   slide.addShape(pres.shapes.RECTANGLE, { shadow, ... });  // ❌ Second call gets the already-converted values
+   slide.addShape(pres.shapes.RECTANGLE, { shadow, ... });  // ❌ 第二次调用获得的是已转换的值
    slide.addShape(pres.shapes.RECTANGLE, { shadow, ... });
 
    const makeShadow = () => ({ type: "outer", blur: 6, offset: 2, color: "000000", opacity: 0.15 });
-   slide.addShape(pres.shapes.RECTANGLE, { shadow: makeShadow(), ... });  // ✅ Fresh object each time
+   slide.addShape(pres.shapes.RECTANGLE, { shadow: makeShadow(), ... });  // ✅ 每次使用新对象
    slide.addShape(pres.shapes.RECTANGLE, { shadow: makeShadow(), ... });
    ```
-8. **`ROUNDED_RECTANGLE` must not be stacked with accent borders** — the rectangle strip cannot cover rounded corners; use `RECTANGLE` instead
+8. **`ROUNDED_RECTANGLE` 不要与强调边框叠加** — 矩形条无法盖住圆角，改用 `RECTANGLE`
    ```javascript
-   // ❌ Wrong: accent strip cannot cover rounded corners
+   // ❌ 错误：强调条无法覆盖圆角
    slide.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 1, y: 1, w: 3, h: 1.5, fill: { color: "FFFFFF" } });
    slide.addShape(pres.shapes.RECTANGLE, { x: 1, y: 1, w: 0.08, h: 1.5, fill: { color: "0891B2" } });
 
-   // ✅ Correct: use RECTANGLE for clean alignment
+   // ✅ 正确：用 RECTANGLE 保持对齐整洁
    slide.addShape(pres.shapes.RECTANGLE, { x: 1, y: 1, w: 3, h: 1.5, fill: { color: "FFFFFF" } });
    slide.addShape(pres.shapes.RECTANGLE, { x: 1, y: 1, w: 0.08, h: 1.5, fill: { color: "0891B2" } });
    ```
 
 ---
 
-## Quick Reference
+## 快速参考
 
-- **Shapes**: RECTANGLE, OVAL, LINE, ROUNDED_RECTANGLE
-- **Charts**: BAR, LINE, PIE, DOUGHNUT, SCATTER, BUBBLE, RADAR
-- **Layouts**: LAYOUT_16x9 (10"×5.625"), LAYOUT_16x10, LAYOUT_4x3, LAYOUT_WIDE
-- **Alignment**: "left", "center", "right"
-- **Chart data label position**: "outEnd", "inEnd", "center"
+- **形状**：RECTANGLE、OVAL、LINE、ROUNDED_RECTANGLE
+- **图表**：BAR、LINE、PIE、DOUGHNUT、SCATTER、BUBBLE、RADAR
+- **布局**：LAYOUT_16x9（10"×5.625"）、LAYOUT_16x10、LAYOUT_4x3、LAYOUT_WIDE
+- **对齐**："left"、"center"、"right"
+- **图表数据标签位置**："outEnd"、"inEnd"、"center"

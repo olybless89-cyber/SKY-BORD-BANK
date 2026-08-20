@@ -12,7 +12,7 @@ import urllib.request
 import uuid
 
 
-ENDPOINT = "https://app-dlavm6ky20ap-api-DY8MNQoqOnMa.gateway.appmedo.com/v1/audio/transcriptions"
+ENDPOINT = "https://app-dptqkburek1u-api-DY8MNQoqOnMa.gateway.appmedo.com/v1/audio/transcriptions"
 TEXT_FORMATS = ("text", "srt", "vtt")
 
 

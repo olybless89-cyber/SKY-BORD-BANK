@@ -1,413 +1,413 @@
-# Slide Page Types
+# 幻灯片页面类型
 
-Classify **every slide** as exactly one of the following **5 types** — none may be omitted:
+将**每张幻灯片**归为以下 **5 种类型之一**，不得遗漏：
 
-## 1. Cover Page
+## 1. 封面页
 
-- **Purpose**: Opening + setting the tone
-- **Content**: Main title, subtitle/presenter, date/occasion, strong background/visual motif
+- **用途**：开场 + 奠定基调
+- **内容**：大标题、副标题/演讲者、日期/场合、强背景/视觉母题
 
-### Layout Options
+### 布局选项
 
-**Asymmetric left-right layout**
-- Text concentrated on one side, image on the other
-- Best for: corporate presentations, product launches, professional reports
+**左右不对称布局**
+- 文字集中在一侧，图片在另一侧
+- 适合：企业演示、产品发布、专业报告
 ```
-|  Title & Subtitle  |    Visual/Image    |
-|  Description       |                    |
+|  标题与副标题  |    视觉/图片    |
+|  描述文字     |                |
 ```
 
-**Center-aligned layout**
-- Content centered, background image fills the slide
-- Best for: motivational talks, event showcases, creative pitches
+**居中对齐布局**
+- 内容居中，背景图片铺满
+- 适合：励志演讲、活动展示、创意路演
 ```
 |                                        |
-|           [Background Image]           |
-|              Main Title                |
-|              Subtitle                  |
+|           [背景图片]                    |
+|              主标题                     |
+|              副标题                     |
 |                                        |
 ```
 
-### Font Hierarchy
+### 字号层级
 
-| Element | Recommended Size | Ratio to Base |
+| 元素 | 推荐字号 | 与基础字号比例 |
 |---------|-----------------|---------------|
-| Main title | 72-120px | 3x-5x |
-| Subtitle | 28-40px | 1.5x-2x |
-| Supporting text | 18-24px | 1x (base) |
-| Meta info (date, name) | 14-18px | 0.7x-1x |
+| 主标题 | 72-120px | 3x-5x |
+| 副标题 | 28-40px | 1.5x-2x |
+| 支撑文字 | 18-24px | 1x（基础） |
+| 元信息（日期、姓名） | 14-18px | 0.7x-1x |
 
-**Key principles:**
-1. **Dramatic contrast**: Main title should be at least 2-3x larger than subtitle
-2. **Visual anchor**: The largest text becomes the focal point
-3. **Clear hierarchy**: Audience should instantly identify what's most important
-4. **Avoid similarity**: Adjacent text elements must differ by at least 20% in size
+**关键原则：**
+1. **戏剧性对比**：主标题至少是副标题的 2-3 倍大
+2. **视觉锚点**：最大的文字成为视觉焦点
+3. **清晰层级**：观众应能立刻判断哪个最重要
+4. **避免相似**：相邻文字元素字号差距不得小于 20%
 
-### Content Elements
+### 内容元素
 
-1. **Main title** — required, largest font size
-2. **Subtitle** — when supplementary context is needed (noticeably smaller than main title)
-3. **Icon** — use when it reinforces the theme
-4. **Date/event info** — use when relevant (smallest text)
-5. **Company/brand logo** — use when representing an organization
-6. **Presenter name** — use for keynote presentations (small, understated)
+1. **主标题** — 必须，最大字号
+2. **副标题** — 需要补充上下文时（明显小于主标题）
+3. **图标** — 能强化主题时使用
+4. **日期/活动信息** — 相关时使用（最小文字）
+5. **公司/品牌Logo** — 代表机构时使用
+6. **演讲者姓名** — 主题演讲时使用（小号、低调）
 
-### Design Decisions
+### 设计决策
 
-Consider: purpose (corporate/educational/creative), audience, tone, content volume, required visual assets.
+考虑：目的（企业/教育/创意）、受众、基调、内容量、所需视觉素材。
 
-### Workflow
+### 工作流程
 
-1. **Analyze**: understand theme, audience, purpose
-2. **Choose layout**: based on content
-3. **Write slide**: use PptxGenJS, add visual interest with shapes and SVG elements
-4. **Validate**: generate preview as `slide-XX-preview.pptx`, extract text with `python -m markitdown`, confirm content is complete and free of placeholders
+1. **分析**：理解主题、受众、目的
+2. **选择布局**：根据内容选择
+3. **编写幻灯片**：使用 PptxGenJS，用形状和 SVG 元素增加视觉趣味
+4. **验证**：生成预览为 `slide-XX-preview.pptx`，用 `python -m markitdown` 提取文字，确认内容完整且无占位符
 
 ---
 
-## 2. Table of Contents
+## 2. 目录页
 
-- **Purpose**: Navigation + setting expectations (3-5 sections)
-- **Content**: Section list (optional icons/page numbers)
+- **用途**：导航 + 建立预期（3-5 个章节）
+- **内容**：章节列表（可选图标/页码）
 
-### Layout Options
+### 布局选项
 
-**Numbered vertical list** — best for 3-5 sections, simple and direct
+**编号垂直列表** — 适合 3-5 个章节，内容简单直接
 ```
-|  Contents                      |
+|  目录                          |
 |                                |
-|  01  First Section Title       |
-|  02  Second Section Title      |
-|  03  Third Section Title       |
+|  01  第一章节标题               |
+|  02  第二章节标题               |
+|  03  第三章节标题               |
 ```
 
-**Two-column grid** — best for 4-6 sections, content-rich presentations
+**两列网格** — 适合 4-6 个章节，内容丰富的演示
 ```
-|  Contents                              |
-|                                        |
-|  01  First Section   02  Second        |
-|      Description         Description  |
-|  03  Third Section   04  Fourth        |
-```
-
-**Sidebar navigation** — best for 3-5 sections, modern/corporate style
-```
-| ▌01 |  First Section Title         |
-| ▌02 |  Second Section Title        |
-| ▌03 |  Third Section Title         |
+|  目录                              |
+|                                    |
+|  01  第一章节   02  第二章节        |
+|      描述           描述           |
+|  03  第三章节   04  第四章节        |
 ```
 
-**Card style** — best for 3-4 sections, creative/modern style
+**侧边栏导航** — 适合 3-5 个章节，现代/企业风
 ```
-|  Contents                                     |
-|  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐           |
-|  │ 01  │  │ 02  │  │ 03  │  │ 04  │           |
-|  │Title│  │Title│  │Title│  │Title│           |
-|  └─────┘  └─────┘  └─────┘  └─────┘           |
+| ▌01 |  第一章节标题                |
+| ▌02 |  第二章节标题                |
+| ▌03 |  第三章节标题                |
 ```
 
-### Font Hierarchy
+**卡片式** — 适合 3-4 个章节，创意/现代风
+```
+|  目录                                     |
+|  ┌─────┐  ┌─────┐  ┌─────┐  ┌─────┐       |
+|  │ 01  │  │ 02  │  │ 03  │  │ 04  │       |
+|  │标题 │  │标题 │  │标题 │  │标题 │       |
+|  └─────┘  └─────┘  └─────┘  └─────┘       |
+```
 
-| Element | Recommended Size | Ratio to Base |
+### 字号层级
+
+| 元素 | 推荐字号 | 与基础字号比例 |
 |---------|-----------------|---------------|
-| Page title ("Contents"/"Agenda") | 36-44px | 2.5x-3x |
-| Section number | 28-36px | 2x-2.5x |
-| Section title | 20-28px | 1.5x-2x |
-| Section description | 14-16px | 1x (base) |
+| 页面标题（"目录"/"议程"） | 36-44px | 2.5x-3x |
+| 章节编号 | 28-36px | 2x-2.5x |
+| 章节标题 | 20-28px | 1.5x-2x |
+| 章节描述 | 14-16px | 1x（基础） |
 
-**Key principles:**
-1. **Clear numbering**: Section numbers should be visually prominent — bold, accent color, or larger
-2. **Scannable structure**: Audience should scan all sections within 2-3 seconds
-3. **Consistent spacing**: Equal spacing between sections
-4. **Visual markers**: Colored dots, lines, numbers, or icons anchor each section
-5. **Avoid clutter**: Descriptions max one line, or omit entirely
+**关键原则：**
+1. **清晰编号**：章节编号应视觉突出——加粗、强调色或更大字号
+2. **可扫描结构**：观众应能在 2-3 秒内扫完所有章节
+3. **一致间距**：章节之间等距
+4. **视觉标记**：彩色点、线条、数字或图标锚定每个章节
+5. **避免杂乱**：描述最多一行，或直接省略
 
-### Content Elements
+### 内容元素
 
-1. **Page title** — required ("Contents", "Agenda", "Overview")
-2. **Section numbers** — consistent format (01, 02... or I, II...)
-3. **Section titles** — clear and concise
-4. **Section descriptions** — optional one-line summary
-5. **Visual separators** — SVG divider lines or spacing
-6. **Decorative elements** — understated accent shapes
-7. **Page number badge** — **required**
+1. **页面标题** — 必须（"目录"、"议程"、"概览"）
+2. **章节编号** — 统一格式（01、02... 或 I、II...）
+3. **章节标题** — 清晰简洁
+4. **章节描述** — 可选的一行摘要
+5. **视觉分隔符** — SVG 分割线或间距
+6. **装饰元素** — 低调的强调形状
+7. **页码徽章** — **必须**
 
-### Design Decisions
+### 设计决策
 
-1. **Section count**: 3 → vertical list; 4-6 → grid or compact; 7+ → multi-column
-2. **Description length**: long → vertical list; no descriptions → compact grid/cards
-3. **Tone**: corporate → numbered list; creative → card style; academic → Roman numerals
-4. **Consistency**: match the visual style of the cover page
+1. **章节数量**：3个 → 垂直列表；4-6个 → 网格或紧凑式；7个+ → 多列
+2. **描述长度**：长 → 垂直列表；无描述 → 紧凑网格/卡片
+3. **基调**：企业 → 编号列表；创意 → 卡片式；学术 → 罗马数字
+4. **一致性**：与封面页视觉风格匹配
 
-### Workflow
+### 工作流程
 
-1. **Analyze**: section list, count, presentation context
-2. **Choose layout**: based on section count and content
-3. **Plan visual hierarchy**: numbering style, font sizes, spacing
-4. **Write slide**: use PptxGenJS, use shapes for decorative elements, **must include page number badge**
-5. **Validate**: generate preview, extract text with markitdown, confirm content and badge
+1. **分析**：章节列表、数量、演示上下文
+2. **选择布局**：根据章节数量和内容
+3. **规划视觉层级**：编号风格、字号、间距
+4. **编写幻灯片**：使用 PptxGenJS，用形状做装饰元素，**必须包含页码徽章**
+5. **验证**：生成预览，用 markitdown 提取文字，确认内容和徽章
 
 ---
 
-## 3. Section Divider
+## 3. 章节分隔页
 
-- **Purpose**: Clear transition between major sections
-- **Content**: Section number + title (optional 1-2 line introduction)
+- **用途**：主要部分之间的清晰过渡
+- **内容**：章节编号 + 标题（可选 1-2 行介绍）
 
-### Layout Options
+### 布局选项
 
-**Bold centered** — best for minimal, modern presentations
+**粗体居中** — 适合极简、现代风演示
 ```
 |                  02                    |
-|           Section Title                |
-|         Optional intro text           |
+|           章节标题                      |
+|         可选介绍文字                    |
 ```
 
-**Left-aligned with accent block** — best for corporate, structured presentations
+**左对齐带强调块** — 适合企业、结构化演示
 ```
 | ████ |  02                            |
-| ████ |  Section Title                 |
-| ████ |  Optional intro text           |
+| ████ |  章节标题                       |
+| ████ |  可选介绍文字                   |
 ```
 
-**Split background** — best for high-contrast, dramatic transitions
+**分割背景** — 适合高对比、戏剧性过渡
 ```
-| ██████████ |     Section Title         |
-| ██  02  ██ |     Optional intro        |
-| ██████████ |                           |
+| ██████████ |     章节标题              |
+| ██  02  ██ |     可选介绍              |
+| ██████████ |                          |
 ```
 
-**Full-bleed background with overlay** — best for creative, bold presentations
+**全出血背景加叠层** — 适合创意、大胆演示
 ```
 | ████████████████████████████████████  |
-| ████       Large 02        █████████  |
-| ████    Section Title       █████████  |
+| ████       大号 02         █████████  |
+| ████    章节标题            █████████  |
 | ████████████████████████████████████  |
 ```
 
-### Font Hierarchy
+### 字号层级
 
-| Element | Recommended Size | Notes |
+| 元素 | 推荐字号 | 备注 |
 |---------|-----------------|-------|
-| Section number | 72-120px | Bold, accent color or semi-transparent |
-| Section title | 36-48px | Bold, clear, primary text color |
-| Intro text | 16-20px | Light weight, understated color, optional |
+| 章节编号 | 72-120px | 加粗，强调色或半透明 |
+| 章节标题 | 36-48px | 加粗，清晰，主文字色 |
+| 介绍文字 | 16-20px | 细字重，低调颜色，可选 |
 
-**Key principles:**
-1. **Prominent number**: Section number = most visually dominant element
-2. **Strong title**: Large but clearly secondary to the number
-3. **Minimal content**: Only number + title + optional one line
-4. **Generous whitespace**: Leave lots of space — dividers are "pause" moments
+**关键原则：**
+1. **醒目的数字**：章节编号 = 最突出的视觉元素
+2. **有力的标题**：大号但明显次于编号
+3. **内容精简**：仅编号 + 标题 + 可选一行
+4. **充足留白**：留出大量空间——分隔页是"停顿"时刻
 
-### Content Elements
+### 内容元素
 
-1. **Section number** — required. Format: `01`, `02`... or `I`, `II`... consistent with TOC
-2. **Section title** — required, clear and concise
-3. **Intro text** — optional 1-2 line description
-4. **Decorative elements** — SVG accent shapes (bars, lines, geometric forms)
-5. **Page number badge** — **required**
+1. **章节编号** — 必须。格式：`01`、`02`... 或 `I`、`II`...，与目录保持一致
+2. **章节标题** — 必须，清晰简洁
+3. **介绍文字** — 可选 1-2 行描述
+4. **装饰元素** — SVG 强调形状（条块、线条、几何图形）
+5. **页码徽章** — **必须**
 
-### Design Decisions
+### 设计决策
 
-1. **Tone**: corporate → accent block; creative → full-bleed; minimal → bold centered
-2. **Color**: use strong palette colors for background/accent; high-contrast text
-3. **Consistency**: all divider pages in the same presentation use the same style
-4. **Contrast with content pages**: visually distinct (different background color, more whitespace)
+1. **基调**：企业 → 强调块；创意 → 全出血；极简 → 粗体居中
+2. **颜色**：背景/强调用强烈的配色方案颜色；文字高对比
+3. **一致性**：同一演示文稿中所有分隔页使用相同风格
+4. **与内容页对比**：视觉上明显不同（不同背景色，更多留白）
 
-### Workflow
+### 工作流程
 
-1. **Analyze**: section number, title, optional intro
-2. **Choose layout**: based on content and tone
-3. **Write slide**: use PptxGenJS, use shapes for decoration, **must include page number badge**
-4. **Validate**: generate preview, extract text, confirm content and badge
+1. **分析**：章节编号、标题、可选介绍
+2. **选择布局**：根据内容和基调
+3. **编写幻灯片**：使用 PptxGenJS，用形状做装饰，**必须包含页码徽章**
+4. **验证**：生成预览，提取文字，确认内容和徽章
 
 ---
 
-## 4. Content Page
+## 4. 内容页
 
-Choose a subtype based on content. Each content page belongs to exactly **one subtype**:
+根据内容选择子类型。每张内容页属于且仅属于以下**一种子类型**：
 
-### Subtypes
+### 子类型
 
-**Text-based** — bullet lists, pull quotes, or short paragraphs
-- Must still include icons or SVG shapes — no text-only slides
+**文字型** — 要点列表、引言或短段落
+- 仍需包含图标或 SVG 形状——不能只有纯文字
 ```
-|  Slide Title                           |
-|  * Bullet one                          |
-|  * Bullet two                          |
-|  * Bullet three                        |
-```
-
-**Image + text** — two-column or half-bleed image + text
-```
-|  Slide Title                           |
-|  Text content  |  [Image/Visual]       |
-|  and bullets   |                       |
+|  幻灯片标题                            |
+|  * 要点一                              |
+|  * 要点二                              |
+|  * 要点三                              |
 ```
 
-**Data visualization** — chart (SVG bar/progress/donut) + key findings
-- Must include data source
+**图文混合型** — 双列或半出血图片+文字
 ```
-|  Slide Title                           |
-|  [SVG Chart]   |  Key finding one      |
-|                |  Key finding two      |
-|                Source: xxx             |
+|  幻灯片标题                            |
+|  文字内容     |  [图片/视觉]           |
+|  和要点      |                        |
 ```
 
-**Comparison** — side-by-side columns (A vs B, pros/cons)
+**数据可视化型** — 图表（SVG 条形/进度/环形）+ 关键发现
+- 必须包含数据来源
 ```
-|  Slide Title                           |
-|  ┌─ Option A ─┐  ┌─ Option B ─┐        |
-|  │  Detail 1  │  │  Detail 1  │        |
-|  └────────────┘  └────────────┘        |
+|  幻灯片标题                            |
+|  [SVG图表]    |  关键发现一            |
+|               |  关键发现二            |
+|               来源：xxx                |
 ```
 
-**Timeline/process** — steps with arrows, journeys, phases
+**对比型** — 并列列（A vs B、优缺点）
 ```
-|  Slide Title                           |
+|  幻灯片标题                            |
+|  ┌─ 选项A ─┐  ┌─ 选项B ─┐             |
+|  │  细节1  │  │  细节1  │             |
+|  └─────────┘  └─────────┘             |
+```
+
+**时间线/流程型** — 带箭头的步骤、旅程、阶段
+```
+|  幻灯片标题                            |
 |  [1] ──→ [2] ──→ [3] ──→ [4]          |
-|  Step    Step    Step    Step          |
+|  步骤    步骤    步骤    步骤           |
 ```
 
-**Image showcase** — hero image, gallery, visual-first layout
+**图片展示型** — 主图、画廊、视觉优先布局
 ```
-|  Slide Title                           |
+|  幻灯片标题                            |
 |  ┌────────────────────────────────┐   |
-|  │         [Hero Image]           │   |
+|  │         [主图]                 │   |
 |  └────────────────────────────────┘   |
-|  Caption or supporting text           |
+|  说明文字或辅助文字                     |
 ```
 
-### Font Hierarchy
+### 字号层级
 
-| Element | Recommended Size | Notes |
+| 元素 | 推荐字号 | 备注 |
 |---------|-----------------|-------|
-| Slide title | 36-44px | Bold, at the top |
-| Section heading | 20-24px | Bold, for in-slide sections |
-| Body text | 14-16px | Normal weight, left-aligned |
-| Captions/sources | 10-12px | Understated color, minimum size |
-| Data callout | 60-72px | Large bold numbers for key stats |
+| 幻灯片标题 | 36-44px | 加粗，位于顶部 |
+| 小节标题 | 20-24px | 加粗，用于幻灯片内的小节 |
+| 正文 | 14-16px | 常规字重，左对齐 |
+| 说明/来源 | 10-12px | 低调颜色，最小字号 |
+| 数据标注 | 60-72px | 大号加粗数字，用于关键数据 |
 
-**Key principles:**
-1. **Left-align body text** — never center paragraphs or bullet lists
-2. **Font size contrast** — title must be 36pt+ to stand out from 14-16pt body
-3. **Visual element required** — every content page must have at least one non-text element
-4. **Whitespace** — minimum 0.5" margins, 0.3-0.5" between content blocks
+**关键原则：**
+1. **正文左对齐** — 不要居中段落或要点列表
+2. **字号对比** — 标题必须 36pt+ 才能突出于 14-16pt 正文
+3. **必须有视觉元素** — 每张内容页必须至少有一个非文字元素
+4. **留白** — 最小 0.5" 边距，内容区块之间 0.3-0.5"
 
-### Content Elements
+### 内容元素
 
-1. **Slide title** — required, at the top
-2. **Main content** — varies by subtype: text, bullets, data, or comparison
-3. **Visual element** — image, chart, icon, or SVG shape — **required**
-4. **Source/caption** — when displaying data or external content
-5. **Page number badge** — **required**
+1. **幻灯片标题** — 必须，位于顶部
+2. **主体内容** — 根据子类型，可为文字、要点、数据或对比
+3. **视觉元素** — 图片、图表、图标或 SVG 形状——必须
+4. **来源/说明** — 展示数据或外部内容时
+5. **页码徽章** — **必须**
 
-### Design Decisions
+### 设计决策
 
-1. **Subtype first**: determine this first — it drives the overall layout
-2. **Content density**: dense → multi-column or smaller font; light → larger elements with more whitespace
-3. **Data vs narrative**: data-heavy → charts + number callouts; story-driven → images + pull quotes
-4. **Variety**: each content page layout should differ from the previous one
-5. **Consistency**: fonts, colors, and spacing must align with the overall theme
+1. **子类型**：优先确定——决定整体布局
+2. **内容量**：密集 → 多列或更小字号；轻量 → 更大元素配更多留白
+3. **数据 vs 叙事**：数据多 → 图表+数字标注；故事性强 → 图片+引言
+4. **多样性**：每张内容页布局应与前一张不同
+5. **一致性**：字体、颜色、间距必须与整体保持一致
 
-### Workflow
+### 工作流程
 
-1. **Analyze**: content, determine subtype, plan layout
-2. **Choose layout**: best option for the subtype and content density
-3. **Write slide**: use PptxGenJS, use shapes for charts, decoration, icons, **must include page number badge**
-4. **Validate**: generate preview as `slide-XX-preview.pptx`, extract text with markitdown, confirm content is complete, no placeholders, badge present
+1. **分析**：内容，确定子类型，规划布局
+2. **选择布局**：最适合子类型和内容量的方案
+3. **编写幻灯片**：使用 PptxGenJS，用形状做图表、装饰、图标，**必须包含页码徽章**
+4. **验证**：生成预览为 `slide-XX-preview.pptx`，用 markitdown 提取文字，确认内容完整、无占位符、有徽章
 
 ---
 
-## 5. Summary/Closing Page
+## 5. 总结/结尾页
 
-- **Purpose**: Wrap up + call to action
-- **Content**: Key takeaways, call to action/next steps, contact info/QR code, acknowledgments
+- **用途**：收尾 + 行动号召
+- **内容**：关键要点、行动号召/下一步、联系方式/二维码、致谢
 
-### Layout Options
+### 布局选项
 
-**Key takeaways** — best for educational, corporate, data-driven presentations
+**关键要点** — 适合教育、企业、数据驱动的演示
 ```
-|  Key Takeaways                         |
-|  ✓  Takeaway one                      |
-|  ✓  Takeaway two                      |
-|  ✓  Takeaway three                    |
-```
-
-**Call to action / next steps** — best for sales pitches, proposals, project kickoffs
-```
-|  Next Steps                           |
-|  [1] Action item one                  |
-|  [2] Action item two                  |
-|  Contact: email@example.com           |
+|  关键要点                              |
+|  ✓  要点一                            |
+|  ✓  要点二                            |
+|  ✓  要点三                            |
 ```
 
-**Acknowledgments / contact info** — best for conference talks, keynotes
+**行动号召/下一步** — 适合销售路演、方案提案、项目启动
 ```
-|            Thank You                  |
+|  下一步                               |
+|  [1] 行动项一                         |
+|  [2] 行动项二                         |
+|  联系：email@example.com              |
+```
+
+**致谢/联系方式** — 适合会议演讲、主题演讲
+```
+|            感谢聆听                   |
 |         name@company.com             |
-|         @handle | website.com        |
+|         @账号 | website.com          |
 ```
 
-**Split recap** — best for presentations that need both recap and action
+**分栏回顾** — 适合同时需要回顾和行动的演示
 ```
-|  Summary          |  Next Steps       |
-|  * Takeaway one   |  Contact us       |
-|  * Takeaway two   |  email@co.com    |
-|  * Takeaway three |  [QR Code]        |
+|  总结             |  下一步           |
+|  * 要点一         |  联系我们         |
+|  * 要点二         |  email@co.com    |
+|  * 要点三         |  [二维码]         |
 ```
 
-### Font Hierarchy
+### 字号层级
 
-| Element | Recommended Size | Notes |
+| 元素 | 推荐字号 | 备注 |
 |---------|-----------------|-------|
-| Closing title ("Thank You"/"Summary") | 48-72px | Bold, impactful |
-| Takeaways/action items | 18-24px | Clear, scannable |
-| Supporting text | 14-16px | Normal weight |
-| Contact info | 14-16px | Understated color |
+| 结束标题（"感谢"/"总结"） | 48-72px | 加粗，有气势 |
+| 要点/行动项 | 18-24px | 清晰，可扫描 |
+| 支撑文字 | 14-16px | 常规字重 |
+| 联系方式 | 14-16px | 低调颜色 |
 
-**Key principles:**
-1. **Strong closing statement**: Primary message should be the largest and most prominent
-2. **Scannable items**: Takeaways/action items concise (one line each)
-3. **Clear contact info**: Readable but not visually dominant
-4. **Memorable ending**: Confident, polished close
+**关键原则：**
+1. **有力的收尾语**：主要信息应最大、最突出
+2. **可扫描的条目**：要点/行动项简洁（每条一行）
+3. **联系方式清晰**：易读但不主导视觉
+4. **令人印象深刻的结尾**：自信、精致的收场
 
-### Content Elements
+### 内容元素
 
-1. **Closing title** — required
-2. **Takeaways** — 3-5 concise summaries (if applicable)
-3. **Call to action** — clear next steps (if applicable)
-4. **Contact info** — email, website, social handles (if provided)
-5. **Decorative elements** — SVG accents, maintain visual consistency
-6. **Page number badge** — **required**
+1. **结束标题** — 必须
+2. **要点** — 3-5 条简洁摘要（如适用）
+3. **行动号召** — 清晰的下一步（如适用）
+4. **联系方式** — 邮箱、网站、社交账号（如提供）
+5. **装饰元素** — SVG 强调，保持视觉一致性
+6. **页码徽章** — **必须**
 
-### Design Decisions
+### 设计决策
 
-1. **Closing type**: recap, call to action, acknowledgment, or combination
-2. **Content volume**: multiple takeaways → list; simple close → centered acknowledgment
-3. **Audience action**: needs action → call to action; information only → takeaways
-4. **Consistent tone**: emotional continuity with the cover page
-5. **Visual distinction**: distinctive but cohesive with the overall theme
+1. **结尾类型**：回顾、行动号召、致谢，或组合
+2. **内容量**：多个要点 → 列表；简单结尾 → 居中致谢
+3. **受众行动**：需要行动 → 行动号召；仅信息传达 → 要点
+4. **基调一致**：与封面页的情感一脉相承
+5. **视觉区分**：有特色但不脱节于整体
 
-### Workflow
+### 工作流程
 
-1. **Analyze**: closing content — takeaways, call to action, contact info, acknowledgments
-2. **Choose layout**: based on content type
-3. **Write slide**: use PptxGenJS, use shapes for decoration, **must include page number badge**
-4. **Validate**: generate preview, extract text, confirm content and badge
+1. **分析**：结尾内容——要点、行动号召、联系方式、致谢
+2. **选择布局**：根据内容类型
+3. **编写幻灯片**：使用 PptxGenJS，用形状做装饰，**必须包含页码徽章**
+4. **验证**：生成预览，提取文字，确认内容和徽章
 
 ---
 
-## Additional Layout Patterns
+## 附加布局模式
 
-Use these patterns in content pages to maintain visual variety:
+在内容页中使用以下模式，保持视觉多样性：
 
-- **Two-column** (text left, visual right)
-- **Icon + text rows** (colored circle icons, bold titles, descriptions below)
-- **2×2 or 2×3 grid** (image on one side, content block grid on the other)
-- **Half-bleed image** (fills left or right side) with content overlay
-- **Large stat callouts** (60-72pt large numbers with small labels below)
-- **Comparison columns** (before/after, pros/cons)
-- **Timeline or process flow** (numbered steps, arrows)
-- **Icons in small colored circles** beside section headings
-- **Italic emphasis text** for key data or taglines
+- **双列**（文字在左，图示在右）
+- **图标+文字行**（彩色圆圈图标，加粗标题，下方描述）
+- **2×2 或 2×3 网格**（一侧图片，另一侧内容块网格）
+- **半出血图片**（占满左侧或右侧）配内容叠层
+- **大数字标注**（60-72pt 大数字，下方小标签）
+- **对比列**（前后、优缺点）
+- **时间线或流程图**（编号步骤、箭头）
+- **彩色小圆圈中的图标**放在小节标题旁
+- **斜体强调文字**用于关键数据或标语

@@ -4,7 +4,7 @@
 
 | Property | Value |
 |----------|-------|
-| Endpoint | `GET https://app-dlavm6ky20ap-api-m9xKXDbRplNa.gateway.appmedo.com/parse/imageurl` |
+| Endpoint | `GET https://app-dptqkburek1u-api-m9xKXDbRplNa.gateway.appmedo.com/parse/imageurl` |
 | Content-Type | N/A (GET request; parameters passed via Query String) |
 | Authentication | user_managed (API Key passed directly) |
 | Auth Header | `X-Gateway-Authorization: K87649693488957` |
@@ -72,83 +72,19 @@
 
 ## Generation-Time Usage (Agent Direct Call)
 
-```typescript
-const AUTH_VALUE = "K87649693488957"; // user_managed — API Key from source_context
+Use the built-in script for generation-time calls — do not hand-write TypeScript request code. Bash tool timeout must be set to `600000` ms.
 
-interface OCRWord {
-  WordText: string;
-  Left: number;
-  Top: number;
-  Height: number;
-  Width: number;
-}
-
-interface OCRParsedResult {
-  ParsedText: string;
-  FileParseExitCode: number;
-  TextOverlay?: {
-    Lines: Array<{ Words: OCRWord[] }>;
-  };
-}
-
-interface OCRUrlResponse {
-  ParsedResults: OCRParsedResult[];
-  OCRExitCode: number;
-  IsErroredOnProcessing: boolean;
-  ProcessingTimeInMilliseconds: string;
-}
-
-/**
- * GET /parse/imageurl — Simplified OCR endpoint (URL-only, not billed)
- *
- * @param imageUrl          URL of the image or PDF to recognize
- * @param language          Language code, default "eng"
- * @param isOverlayRequired Whether to return coordinate information, default false
- */
-async function ocrParseImageUrl(
-  imageUrl: string,
-  language = "eng",
-  isOverlayRequired = false
-): Promise<OCRUrlResponse> {
-  const params = new URLSearchParams({
-    url: imageUrl,
-    language,
-    isOverlayRequired: String(isOverlayRequired),
-  });
-
-  const response = await fetch(
-    `https://app-dlavm6ky20ap-api-m9xKXDbRplNa.gateway.appmedo.com/parse/imageurl?${params.toString()}`,
-    {
-      method: "GET",
-      headers: {
-        "Accept": "application/json",
-        "X-Gateway-Authorization": AUTH_VALUE,
-      },
-    }
-  );
-
-  if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-
-  const json: OCRUrlResponse = await response.json();
-
-  if (json.IsErroredOnProcessing) {
-    throw new Error(`OCR processing error (OCRExitCode: ${json.OCRExitCode})`);
-  }
-  if (json.OCRExitCode === 3 || json.OCRExitCode === 4) {
-    throw new Error(`OCR failed with exit code: ${json.OCRExitCode}`);
-  }
-
-  return json;
-}
-
-// Usage example: recognize English text in an image URL
-const result = await ocrParseImageUrl("https://example.com/image.jpg", "eng");
-console.log(result.ParsedResults[0].ParsedText);
-
-// Usage example: recognize text in a Chinese image
-const chineseResult = await ocrParseImageUrl("https://example.com/chinese.jpg", "chs");
-console.log(chineseResult.ParsedResults[0].ParsedText);
+```bash
+python3 <skill-path>/scripts/call_ocr_space.py \
+  --url "https://example.com/doc.jpg" \
+  [--language eng] \
+  [--engine 1] \
+  [--overlay] \
+  [--table] \
+  [--scale]
 ```
+
+The script reads the API key, calls the endpoint, and prints one JSON line to stdout: `{"status":"succeed","result":{...}}`. On failure it prints an error to stderr and exits with a non-zero code.
 
 ---
 
@@ -202,7 +138,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    `https://app-dlavm6ky20ap-api-m9xKXDbRplNa.gateway.appmedo.com/parse/imageurl?${params.toString()}`,
+    `https://app-dptqkburek1u-api-m9xKXDbRplNa.gateway.appmedo.com/parse/imageurl?${params.toString()}`,
     {
       method: "GET",
       headers: {

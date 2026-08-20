@@ -4,7 +4,7 @@
 
 | Property | Value |
 |----------|-------|
-| Endpoint | `POST https://app-dlavm6ky20ap-api-W9z3M6eONl3L.gateway.appmedo.com/parse/image` |
+| Endpoint | `POST https://app-dptqkburek1u-api-W9z3M6eONl3L.gateway.appmedo.com/parse/image` |
 | Content-Type | `multipart/form-data` |
 | Authentication | user_managed (API Key passed directly) |
 | Auth Header | `X-Gateway-Authorization: K87649693488957` |
@@ -85,105 +85,20 @@
 
 ## Generation-Time Usage (Agent Direct Call)
 
-```typescript
-const AUTH_VALUE = "K87649693488957"; // user_managed — API Key from source_context
+Use the built-in script for generation-time calls — do not hand-write TypeScript request code. Bash tool timeout must be set to `600000` ms.
 
-interface OCRWord {
-  WordText: string;
-  Left: number;
-  Top: number;
-  Height: number;
-  Width: number;
-}
-
-interface OCRLine {
-  Words: OCRWord[];
-  MaxHeight: number;
-  MinTop: number;
-}
-
-interface OCRParsedResult {
-  ParsedText: string;
-  FileParseExitCode: number;
-  ErrorMessage: string | null;
-  TextOverlay?: {
-    Lines: OCRLine[];
-    HasOverlay: boolean;
-  };
-}
-
-interface OCRResponse {
-  ParsedResults: OCRParsedResult[];
-  OCRExitCode: number;
-  IsErroredOnProcessing: boolean;
-  ProcessingTimeInMilliseconds: string;
-  SearchablePDFURL?: string;
-}
-
-/**
- * POST /parse/image — Core OCR endpoint (supports URL / Base64 / advanced options)
- *
- * @param imageUrl    URL of the image or PDF (mutually exclusive with base64Image)
- * @param base64Image Base64-encoded image data (with prefix; mutually exclusive with imageUrl)
- * @param language    Language code, default "eng"
- * @param options     Optional advanced parameters
- */
-async function ocrParseImage(params: {
-  imageUrl?: string;
-  base64Image?: string;
-  language?: string;
-  isOverlayRequired?: boolean;
-  isTable?: boolean;
-  detectOrientation?: boolean;
-  OCREngine?: 1 | 2;
-}): Promise<OCRResponse> {
-  if (!params.imageUrl && !params.base64Image) {
-    throw new Error("Must provide either imageUrl or base64Image");
-  }
-
-  const form = new FormData();
-  if (params.imageUrl)     form.append("url",               params.imageUrl);
-  if (params.base64Image)  form.append("base64Image",        params.base64Image);
-  if (params.language)     form.append("language",           params.language);
-  if (params.isOverlayRequired !== undefined) form.append("isOverlayRequired", String(params.isOverlayRequired));
-  if (params.isTable !== undefined)           form.append("isTable",           String(params.isTable));
-  if (params.detectOrientation !== undefined) form.append("detectOrientation", String(params.detectOrientation));
-  if (params.OCREngine !== undefined)         form.append("OCREngine",         String(params.OCREngine));
-
-  const response = await fetch("https://app-dlavm6ky20ap-api-W9z3M6eONl3L.gateway.appmedo.com/parse/image", {
-    method: "POST",
-    headers: {
-      "X-Gateway-Authorization": AUTH_VALUE,
-      // Content-Type is set automatically by fetch when using FormData (multipart/form-data with boundary)
-    },
-    body: form,
-  });
-
-  if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-
-  const json: OCRResponse = await response.json();
-
-  if (json.IsErroredOnProcessing) {
-    const errMsg = json.ParsedResults?.[0]?.ErrorMessage ?? "Unknown OCR error";
-    throw new Error(`OCR processing error: ${errMsg}`);
-  }
-  if (json.OCRExitCode === 3 || json.OCRExitCode === 4) {
-    throw new Error(`OCR failed with exit code: ${json.OCRExitCode}`);
-  }
-
-  return json;
-}
-
-// Usage example: recognize text in an image URL
-const result = await ocrParseImage({ imageUrl: "https://example.com/image.jpg", language: "eng" });
-console.log(result.ParsedResults[0].ParsedText);
-
-// Usage example: recognize a Base64 image and return coordinate overlay
-const resultWithOverlay = await ocrParseImage({
-  base64Image: "data:image/jpeg;base64,/9j/4AAQ...",
-  isOverlayRequired: true,
-});
+```bash
+python3 <skill-path>/scripts/call_ocr_space.py \
+  --file /path/doc.png \
+  [--language eng] \
+  [--engine 2] \
+  [--overlay] \
+  [--table] \
+  [--scale] \
+  [--filetype PNG]
 ```
+
+The script reads the API key, calls the endpoint, and prints one JSON line to stdout: `{"status":"succeed","result":{...}}`. On failure it prints an error to stderr and exits with a non-zero code.
 
 ---
 
@@ -243,7 +158,7 @@ serve(async (req: Request): Promise<Response> => {
   if (isTable !== undefined)           form.append("isTable",           String(isTable));
 
   // --- Call upstream ---
-  const upstream = await fetch("https://app-dlavm6ky20ap-api-W9z3M6eONl3L.gateway.appmedo.com/parse/image", {
+  const upstream = await fetch("https://app-dptqkburek1u-api-W9z3M6eONl3L.gateway.appmedo.com/parse/image", {
     method: "POST",
     headers: {
       "X-Gateway-Authorization": apiKey,

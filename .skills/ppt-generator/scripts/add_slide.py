@@ -25,7 +25,6 @@ from pathlib import Path
 
 
 def get_next_slide_number(slides_dir: Path) -> int:
-    """Return the next available slide number by scanning existing slide*.xml files."""
     existing = [
         int(m.group(1))
         for f in slides_dir.glob("slide*.xml")
@@ -35,12 +34,6 @@ def get_next_slide_number(slides_dir: Path) -> int:
 
 
 def create_slide_from_layout(unpacked_dir: Path, layout_file: str) -> None:
-    """Create a new blank slide referencing the given slide layout and register it in the package.
-
-    Writes the new slide XML, a .rels file pointing to the layout, adds the slide to
-    [Content_Types].xml and presentation.xml.rels, then prints the <p:sldId> snippet to insert
-    into presentation.xml's <p:sldIdLst>.
-    """
     slides_dir = unpacked_dir / "ppt" / "slides"
     rels_dir = slides_dir / "_rels"
     layouts_dir = unpacked_dir / "ppt" / "slideLayouts"
@@ -104,12 +97,6 @@ def create_slide_from_layout(unpacked_dir: Path, layout_file: str) -> None:
 
 
 def duplicate_slide(unpacked_dir: Path, source: str) -> None:
-    """Duplicate an existing slide file and register the copy in the package.
-
-    Copies the source slide and its .rels file, strips any notesSlide relationship from the
-    copy, then updates [Content_Types].xml and presentation.xml.rels.  Prints the <p:sldId>
-    snippet to insert into presentation.xml's <p:sldIdLst>.
-    """
     slides_dir = unpacked_dir / "ppt" / "slides"
     rels_dir = slides_dir / "_rels"
 
@@ -152,7 +139,6 @@ def duplicate_slide(unpacked_dir: Path, source: str) -> None:
 
 
 def _add_to_content_types(unpacked_dir: Path, dest: str) -> None:
-    """Add an Override entry for the new slide to [Content_Types].xml if not already present."""
     content_types_path = unpacked_dir / "[Content_Types].xml"
     content_types = content_types_path.read_text(encoding="utf-8")
 
@@ -169,7 +155,6 @@ def _add_to_content_types(unpacked_dir: Path, dest: str) -> None:
 
 
 def _add_to_presentation_rels(unpacked_dir: Path, dest: str) -> str:
-    """Add a slide Relationship to presentation.xml.rels and return the new relationship ID."""
     pres_rels_path = unpacked_dir / "ppt" / "_rels" / "presentation.xml.rels"
     pres_rels = pres_rels_path.read_text(encoding="utf-8")
 
@@ -192,7 +177,6 @@ def _add_to_presentation_rels(unpacked_dir: Path, dest: str) -> str:
 
 
 def _get_next_slide_id(unpacked_dir: Path) -> int:
-    """Return the next available numeric slide ID by scanning <p:sldId> elements in presentation.xml."""
     pres_path = unpacked_dir / "ppt" / "presentation.xml"
     pres_content = pres_path.read_text(encoding="utf-8")
     slide_ids = [int(m) for m in re.findall(r'<p:sldId[^>]*id="(\d+)"', pres_content)]
@@ -200,10 +184,6 @@ def _get_next_slide_id(unpacked_dir: Path) -> int:
 
 
 def parse_source(source: str) -> tuple[str, str | None]:
-    """Classify the source argument as either a 'layout' or 'slide' type.
-
-    Returns a tuple of (type_str, layout_filename_or_None).
-    """
     if source.startswith("slideLayout") and source.endswith(".xml"):
         return ("layout", source)
 

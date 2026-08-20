@@ -4,7 +4,7 @@
 
 | Item | Details |
 |------|---------|
-| Endpoint | `GET https://app-dlavm6ky20ap-api-oYA6Z8wDBRDa.gateway.appmedo.com/v1/videos/image2video/{id}` |
+| Endpoint | `GET https://app-dptqkburek1u-api-oYA6Z8wDBRDa.gateway.appmedo.com/v1/videos/image2video/{id}` |
 | Authentication | `X-Gateway-Authorization: Bearer ${INTEGRATIONS_API_KEY}` |
 | Content-Type | `application/json` |
 | Note | Used only to poll task status; not billed |
@@ -138,7 +138,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream query API ---
   const upstream = await fetch(
-    `https://app-dlavm6ky20ap-api-oYA6Z8wDBRDa.gateway.appmedo.com/v1/videos/image2video/${encodeURIComponent(taskId)}`,
+    `https://app-dptqkburek1u-api-oYA6Z8wDBRDa.gateway.appmedo.com/v1/videos/image2video/${encodeURIComponent(taskId)}`,
     {
       method: "GET",
       headers: {

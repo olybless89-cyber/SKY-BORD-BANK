@@ -91,6 +91,10 @@ export default {
                 md: 'calc(var(--radius) - 2px)',
                 sm: 'calc(var(--radius) - 4px)'
             },
+            fontFamily: {
+                heading: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+                body: ['"Sora"', 'system-ui', 'sans-serif']
+            },
             backgroundImage: {
                 'gradient-primary': 'var(--gradient-primary)',
                 'gradient-card': 'var(--gradient-card)',

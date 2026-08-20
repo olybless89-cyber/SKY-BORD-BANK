@@ -14,13 +14,6 @@ from .base import BaseSchemaValidator
 
 
 class DOCXSchemaValidator(BaseSchemaValidator):
-    """Validator for Word document (.docx) XML files, extending BaseSchemaValidator.
-
-    Adds Word-specific checks: whitespace preservation, deletion/insertion markup,
-    paragraph-count comparison, paraId/durableId constraint validation, and
-    comment-marker pairing.  Also provides auto-repair for out-of-range durableId values.
-    """
-
     WORD_2006_NAMESPACE = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
     W14_NAMESPACE = "http://schemas.microsoft.com/office/word/2010/wordml"
     W16CID_NAMESPACE = "http://schemas.microsoft.com/office/word/2016/wordml/cid"
@@ -28,7 +21,6 @@ class DOCXSchemaValidator(BaseSchemaValidator):
     ELEMENT_RELATIONSHIP_TYPES = {}
 
     def validate(self):
-        """Run all DOCX-specific and base validation checks, returning True if the document is valid."""
         if not self.validate_xml():
             return False
 
@@ -71,7 +63,6 @@ class DOCXSchemaValidator(BaseSchemaValidator):
         return all_valid
 
     def validate_whitespace_preservation(self):
-        """Check that every <w:t> element with leading/trailing whitespace has xml:space="preserve"."""
         errors = []
 
         for xml_file in self.xml_files:
@@ -119,7 +110,6 @@ class DOCXSchemaValidator(BaseSchemaValidator):
             return True
 
     def validate_deletions(self):
-        """Verify that <w:del> elements contain <w:delText> (not <w:t>) and <w:delInstrText>."""
         errors = []
 
         for xml_file in self.xml_files:
@@ -173,7 +163,6 @@ class DOCXSchemaValidator(BaseSchemaValidator):
             return True
 
     def count_paragraphs_in_unpacked(self):
-        """Count <w:p> elements in the unpacked document.xml."""
         count = 0
 
         for xml_file in self.xml_files:
@@ -190,7 +179,6 @@ class DOCXSchemaValidator(BaseSchemaValidator):
         return count
 
     def count_paragraphs_in_original(self):
-        """Count <w:p> elements in the original packed .docx file."""
         original = self.original_file
         if original is None:
             return 0
@@ -214,7 +202,6 @@ class DOCXSchemaValidator(BaseSchemaValidator):
         return count
 
     def validate_insertions(self):
-        """Verify that <w:ins> elements do not contain bare <w:delText> outside a <w:del>."""
         errors = []
 
         for xml_file in self.xml_files:
@@ -256,7 +243,6 @@ class DOCXSchemaValidator(BaseSchemaValidator):
             return True
 
     def compare_paragraph_counts(self):
-        """Print the paragraph count delta between the original and the modified document."""
         original_count = self.count_paragraphs_in_original()
         new_count = self.count_paragraphs_in_unpacked()
 
@@ -265,11 +251,9 @@ class DOCXSchemaValidator(BaseSchemaValidator):
         print(f"\nParagraphs: {original_count} → {new_count} ({diff_str})")
 
     def _parse_id_value(self, val: str, base: int = 16) -> int:
-        """Parse an ID string as an integer in the given base."""
         return int(val, base)
 
     def validate_id_constraints(self):
-        """Verify that w14:paraId values are < 0x80000000 and w16cid:durableId values are < 0x7FFFFFFF."""
         errors = []
         para_id_attr = f"{{{self.W14_NAMESPACE}}}paraId"
         durable_id_attr = f"{{{self.W16CID_NAMESPACE}}}durableId"
@@ -312,7 +296,6 @@ class DOCXSchemaValidator(BaseSchemaValidator):
         return not errors
 
     def validate_comment_markers(self):
-        """Verify that every commentRangeStart has a matching End and all marker IDs map to comments."""
         errors = []
 
         document_xml = None
@@ -401,16 +384,11 @@ class DOCXSchemaValidator(BaseSchemaValidator):
             return True
 
     def repair(self) -> int:
-        """Run base repairs and DOCX-specific durableId repair, returning total count."""
         repairs = super().repair()
         repairs += self.repair_durableId()
         return repairs
 
     def repair_durableId(self) -> int:
-        """Replace out-of-range w16cid:durableId values with valid random IDs.
-
-        Returns the number of elements repaired.
-        """
         repairs = 0
 
         for xml_file in self.xml_files:

@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "echo 'Do not use this command, only use lint to check'",
     "build": "echo 'Do not use this command, only use lint to check'",
-    "build:railway": "vite build",
     "lint": "tsgo -p tsconfig.check.json; npx biome lint; .rules/check.sh;npx tailwindcss -i ./src/index.css -o /dev/null 2>&1 | grep -E '^(CssSyntaxError|Error):.*' || true;.rules/testBuild.sh"
   },
   "dependencies": {
@@ -50,9 +49,9 @@
     "input-otp": "^1.4.2",
     "ky": "^1.13.0",
     "lucide-react": "^0.576.0",
-    "miaoda-react-devkit": "0.1.1-beta.15",
+    "miaoda-react-devkit": "0.1.1-beta.18",
     "miaoda-sc-plugin": "1.0.63",
-    "motion": "^12.23.25",
+    "motion": "^12.43.0",
     "next-themes": "^0.4.6",
     "qrcode": "^1.5.4",
     "react": "^18.0.0",
@@ -65,6 +64,7 @@
     "react-router": "^7.9.5",
     "react-router-dom": "^7.9.5",
     "recharts": "2.15.4",
+    "serve": "^14.2.6",
     "sonner": "^2.0.7",
     "streamdown": "^1.4.0",
     "tailwind-merge": "^3.3.1",
@@ -88,7 +88,7 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.11",
     "typescript": "~5.9.3",
-    "vite": "npm:rolldown-vite@latest",
+    "vite": "^5.4.19",
     "vite-plugin-svgr": "^4.5.0"
   }
 }

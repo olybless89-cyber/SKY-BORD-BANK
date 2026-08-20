@@ -36,22 +36,6 @@ def unpack(
     merge_runs: bool = True,
     simplify_redlines: bool = True,
 ) -> tuple[None, str]:
-    """Extract an Office file to a directory, pretty-print XML, and optionally preprocess DOCX.
-
-    After extraction all XML/rels files are pretty-printed.  For DOCX files,
-    adjacent tracked-change elements from the same author are merged and then
-    adjacent runs with identical formatting are merged.  Smart-quote characters
-    are escaped to XML entities so the file remains editable as plain text.
-
-    Args:
-        input_file: Path to the Office file (.docx, .pptx, or .xlsx).
-        output_directory: Destination directory (created if it does not exist).
-        merge_runs: Merge adjacent runs with identical rPr in DOCX files.
-        simplify_redlines: Merge adjacent tracked changes from the same author in DOCX files.
-
-    Returns:
-        A tuple of (None, status_message).
-    """
     input_path = Path(input_file)
     output_path = Path(output_directory)
     suffix = input_path.suffix.lower()
@@ -95,7 +79,6 @@ def unpack(
 
 
 def _pretty_print_xml(xml_file: Path) -> None:
-    """Rewrite an XML file with two-space indented pretty-printing.  Silently ignores parse errors."""
     try:
         content = xml_file.read_text(encoding="utf-8")
         dom = defusedxml.minidom.parseString(content)
@@ -105,7 +88,6 @@ def _pretty_print_xml(xml_file: Path) -> None:
 
 
 def _escape_smart_quotes(xml_file: Path) -> None:
-    """Replace Unicode smart-quote characters with their XML numeric entity equivalents."""
     try:
         content = xml_file.read_text(encoding="utf-8")
         for char, entity in SMART_QUOTE_REPLACEMENTS.items():

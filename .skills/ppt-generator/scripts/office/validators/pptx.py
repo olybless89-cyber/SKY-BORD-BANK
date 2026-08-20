@@ -8,12 +8,6 @@ from .base import BaseSchemaValidator
 
 
 class PPTXSchemaValidator(BaseSchemaValidator):
-    """Validator for PowerPoint presentation (.pptx) XML files, extending BaseSchemaValidator.
-
-    Adds PPTX-specific checks: UUID-format ID validation, slide-layout ID consistency,
-    duplicate slide-layout references, and notes-slide reference uniqueness.
-    """
-
     PRESENTATIONML_NAMESPACE = (
         "http://schemas.openxmlformats.org/presentationml/2006/main"
     )
@@ -28,7 +22,6 @@ class PPTXSchemaValidator(BaseSchemaValidator):
     }
 
     def validate(self):
-        """Run all PPTX-specific and base validation checks, returning True if the presentation is valid."""
         if not self.validate_xml():
             return False
 
@@ -66,7 +59,6 @@ class PPTXSchemaValidator(BaseSchemaValidator):
         return all_valid
 
     def validate_uuid_ids(self):
-        """Verify that UUID-like ID attribute values contain only valid hexadecimal characters."""
         import lxml.etree
 
         errors = []
@@ -106,12 +98,10 @@ class PPTXSchemaValidator(BaseSchemaValidator):
             return True
 
     def _looks_like_uuid(self, value):
-        """Return True if the value resembles a UUID (32 alphanumeric chars after stripping delimiters)."""
         clean_value = value.strip("{}()").replace("-", "")
         return len(clean_value) == 32 and all(c.isalnum() for c in clean_value)
 
     def validate_slide_layout_ids(self):
-        """Verify that every <p:sldLayoutId> in a slide master references a declared slide-layout relationship."""
         import lxml.etree
 
         errors = []
@@ -180,7 +170,6 @@ class PPTXSchemaValidator(BaseSchemaValidator):
             return True
 
     def validate_no_duplicate_slide_layouts(self):
-        """Verify that each slide's .rels file references exactly one slideLayout."""
         import lxml.etree
 
         errors = []
@@ -219,7 +208,6 @@ class PPTXSchemaValidator(BaseSchemaValidator):
             return True
 
     def validate_notes_slide_references(self):
-        """Verify that each notes slide file is referenced by at most one presentation slide."""
         import lxml.etree
 
         errors = []
