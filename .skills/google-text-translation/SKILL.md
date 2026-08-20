@@ -12,7 +12,7 @@ Translate any text into a specified target language via the Google Cloud Transla
 
 | Item | Details |
 |------|---------|
-| Endpoint | `POST https://app-dlavm6ky20ap-api-GaDwZ8DX7jPY.gateway.appmedo.com/language/translate/v2` |
+| Endpoint | `POST https://app-dptqkburek1u-api-GaDwZ8DX7jPY.gateway.appmedo.com/language/translate/v2` |
 | Auth | platform_managed — key injected via `INTEGRATIONS_API_KEY` |
 | Billing | Billed per call |
 
@@ -123,7 +123,7 @@ serve(async (req: Request): Promise<Response> => {
   if (format) requestBody.format = format;
 
   const upstream = await fetch(
-    "https://app-dlavm6ky20ap-api-GaDwZ8DX7jPY.gateway.appmedo.com/language/translate/v2",
+    "https://app-dptqkburek1u-api-GaDwZ8DX7jPY.gateway.appmedo.com/language/translate/v2",
     {
       method: "POST",
       headers: {

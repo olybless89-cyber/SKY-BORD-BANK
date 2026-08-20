@@ -20,16 +20,6 @@ WORD_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
 
 def simplify_redlines(input_dir: str) -> tuple[int, str]:
-    """Merge adjacent <w:ins> and <w:del> elements from the same author in document.xml.
-
-    Processes all <w:p> and <w:tc> containers and saves the result back to disk.
-
-    Args:
-        input_dir: Path to the unpacked DOCX directory.
-
-    Returns:
-        A tuple of (merge_count, status_message).
-    """
     doc_xml = Path(input_dir) / "word" / "document.xml"
 
     if not doc_xml.exists():
@@ -55,10 +45,6 @@ def simplify_redlines(input_dir: str) -> tuple[int, str]:
 
 
 def _merge_tracked_changes_in(container, tag: str) -> int:
-    """Merge adjacent tracked-change elements of the given tag within a single container node.
-
-    Returns the number of merges performed.
-    """
     merge_count = 0
 
     tracked = [
@@ -87,13 +73,11 @@ def _merge_tracked_changes_in(container, tag: str) -> int:
 
 
 def _is_element(node, tag: str) -> bool:
-    """Return True if the DOM node's local name matches ``tag`` (with or without namespace prefix)."""
     name = node.localName or node.tagName
     return name == tag or name.endswith(f":{tag}")
 
 
 def _get_author(elem) -> str:
-    """Return the w:author attribute value from a tracked-change element."""
     author = elem.getAttribute("w:author")
     if not author:
         for attr in elem.attributes.values():
@@ -103,7 +87,6 @@ def _get_author(elem) -> str:
 
 
 def _can_merge_tracked(elem1, elem2) -> bool:
-    """Return True if two adjacent tracked-change elements can be merged (same author, no elements between them)."""
     if _get_author(elem1) != _get_author(elem2):
         return False
 
@@ -119,7 +102,6 @@ def _can_merge_tracked(elem1, elem2) -> bool:
 
 
 def _merge_tracked_content(target, source):
-    """Move all child nodes from ``source`` into ``target``."""
     while source.firstChild:
         child = source.firstChild
         source.removeChild(child)
@@ -127,11 +109,9 @@ def _merge_tracked_content(target, source):
 
 
 def _find_elements(root, tag: str) -> list:
-    """Return all descendant DOM nodes whose local name matches ``tag``."""
     results = []
 
     def traverse(node):
-        """Recursively visit node and its descendants, collecting matching elements."""
         if node.nodeType == node.ELEMENT_NODE:
             name = node.localName or node.tagName
             if name == tag or name.endswith(f":{tag}"):
@@ -144,7 +124,6 @@ def _find_elements(root, tag: str) -> list:
 
 
 def get_tracked_change_authors(doc_xml_path: Path) -> dict[str, int]:
-    """Return a mapping of author name → tracked-change count from an unpacked document.xml."""
     if not doc_xml_path.exists():
         return {}
 
@@ -168,7 +147,6 @@ def get_tracked_change_authors(doc_xml_path: Path) -> dict[str, int]:
 
 
 def _get_authors_from_docx(docx_path: Path) -> dict[str, int]:
-    """Return a mapping of author name → tracked-change count from a packed .docx file."""
     try:
         with zipfile.ZipFile(docx_path, "r") as zf:
             if "word/document.xml" not in zf.namelist():
@@ -194,11 +172,7 @@ def _get_authors_from_docx(docx_path: Path) -> dict[str, int]:
 def infer_author(
     modified_dir: Path, original_docx: Path, default: str = "Claude"
 ) -> str:
-    """Infer which author added new tracked changes by comparing the modified and original documents.
-
-    Returns the single author who added new changes, or ``default`` if none were found.
-    Raises ValueError if more than one author added new changes.
-    """
+    """推断修订作者。"""
     modified_xml = modified_dir / "word" / "document.xml"
     modified_authors = get_tracked_change_authors(modified_xml)
 

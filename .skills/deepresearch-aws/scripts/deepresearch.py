@@ -12,7 +12,7 @@ import concurrent.futures
 
 _LOG_FILE = None
 
-BASE_URL = "https://app-dlavm6ky20ap-api-zYm4X4jwv0bL.gateway.appmedo.com/"
+BASE_URL = "https://app-dptqkburek1u-api-zYm4X4jwv0bL.gateway.appmedo.com/"
 STREAM_TIMEOUT = 480  # 8 minutes per attempt
 MAX_ATTEMPTS = 4      # 1 start + 3 status checks
 

@@ -1,95 +1,346 @@
 /* stylelint-disable */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap');
+/* ─────────────────────────────────────────────────────────────
+   DESIGN SYSTEM — All colors in HSL
+   Dark dashboard theme is default; landing page overrides via
+   .landing-light wrapper applied to <main> on LandingPage only.
+───────────────────────────────────────────────────────────── */
 
 @layer base {
   :root {
-    --radius: 0.75rem;
-
-    /* SKY-BORD BANK – Premium Blue & White Institutional Theme */
-    --background: 210 33% 98%;
-    --foreground: 222 60% 10%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222 60% 10%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 60% 10%;
-
-    --primary: 221 83% 40%;
+    --radius: 0.5rem;
+    /* Dark navy theme (dashboards) */
+    --background: 224 45% 7%;
+    --foreground: 210 38% 98%;
+    --card: 221 39% 11%;
+    --card-foreground: 210 38% 98%;
+    --popover: 221 39% 11%;
+    --popover-foreground: 210 38% 98%;
+    --primary: 217 91% 55%;
     --primary-foreground: 0 0% 100%;
-
-    --secondary: 214 32% 94%;
-    --secondary-foreground: 222 60% 10%;
-
-    --muted: 214 32% 94%;
-    --muted-foreground: 215 20% 45%;
-
-    --accent: 221 83% 40%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 214 28% 88%;
-    --input: 214 28% 88%;
-    --ring: 221 83% 40%;
-
-    --chart-1: 221 83% 40%;
-    --chart-2: 221 70% 55%;
-    --chart-3: 197 70% 45%;
-    --chart-4: 43 74% 50%;
-    --chart-5: 27 87% 55%;
-
-    --sidebar-background: 222 60% 10%;
-    --sidebar-foreground: 210 33% 96%;
-    --sidebar-primary: 221 83% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 45% 18%;
-    --sidebar-accent-foreground: 210 33% 96%;
-    --sidebar-border: 222 40% 20%;
-    --sidebar-ring: 221 83% 55%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 38% 98%;
+    --muted: 215 20% 65%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 42 65% 52%;
+    --accent-foreground: 224 45% 7%;
+    --destructive: 0 84% 60%;
+    --border: 217 33% 16%;
+    --input: 217 33% 16%;
+    --ring: 217 91% 55%;
+    --chart-1: 217 91% 55%;
+    --chart-2: 42 65% 52%;
+    --chart-3: 160 60% 45%;
+    --chart-4: 30 80% 55%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 224 45% 7%;
+    --sidebar-foreground: 210 38% 98%;
+    --sidebar-primary: 217 91% 55%;
+    --sidebar-primary-foreground: 224 45% 7%;
+    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent-foreground: 210 38% 98%;
+    --sidebar-border: 217 33% 16%;
+    --sidebar-ring: 217 91% 55%;
+    --destructive-foreground: 210 38% 98%;
+    --vault-glow: 217 91% 55%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--border)) transparent;
-  }
+  * { @apply border-border; }
+  html { scroll-behavior: smooth; }
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Sora', system-ui, sans-serif;
   }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Manrope', 'Inter', sans-serif;
+  h1,h2,h3,h4,h5,h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
   }
 }
 
 @layer utilities {
-  .gradient-text {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(172 70% 45%));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .vault-glow {
+    box-shadow: 0 0 80px 40px hsl(var(--vault-glow) / 0.12);
   }
-  .glass-card {
-    background: rgba(255,255,255,0.90);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(30,80,200,0.08);
-    box-shadow: 0 2px 24px rgba(30,80,200,0.07);
-  }
-  .teal-glow {
-    box-shadow: 0 0 40px rgba(30,80,200,0.18);
-  }
-  .hero-overlay {
-    background: linear-gradient(90deg, rgba(10,28,80,0.90) 0%, rgba(10,28,80,0.60) 55%, rgba(10,28,80,0.15) 100%);
-  }
-  .section-muted {
-    background: hsl(214 32% 96%);
-  }
+  .text-balance { text-wrap: balance; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LANDING PAGE — light/white theme applied via .landing-light
+   Scoped so dashboards keep the dark navy theme untouched.
+═══════════════════════════════════════════════════════════ */
+
+/* The landing page <main> wrapper */
+.landing-light {
+  background-color: #ffffff;
+  color: #0f1923;
+}
+
+/* ── Hero section — full-screen background slider ───────── */
+.hero-section {
+  background-color: #0d1a2d;
+}
+
+/* Dark overlay on top of each background image */
+.hero-bg-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.55) 50%,
+    rgba(0, 0, 0, 0.65) 100%
+  );
+}
+
+/* Bottom fade so hero blends into the white landing sections below */
+.hero-bg-fade {
+  background: linear-gradient(to bottom, transparent 0%, #ffffff 100%);
+}
+
+/* Accent colour on heading "In Real Time" */
+.hero-accent-text {
+  color: #60a5fa;
+  text-shadow: 0 0 40px rgba(96, 165, 250, 0.4);
+}
+
+/* Prev/Next arrow buttons */
+.hero-arrow-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+.hero-arrow-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: translateY(-50%) scale(1.08);
+}
+
+/* Primary CTA */
+.hero-cta-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 24px rgba(37, 99, 235, 0.5);
+}
+.hero-cta-primary:hover {
+  background-color: #1d4ed8;
+  box-shadow: 0 6px 30px rgba(37, 99, 235, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Outline CTA */
+.hero-cta-outline {
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(4px);
+}
+.hero-cta-outline:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+/* ── Landing header transparent over dark hero ──────────── */
+.landing-header-transparent {
+  background: transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.landing-header-transparent .header-nav-link-dark {
+  color: rgba(255, 255, 255, 0.85);
+}
+.landing-header-transparent .header-nav-link-dark:hover {
+  color: #ffffff;
+}
+
+/* Keep old light classes for potential future use */
+.hero-tagline { color: #60a5fa; }
+.hero-heading { color: #0d1a2d; }
+.hero-heading-accent { color: #2563eb; }
+.hero-body { color: #4a5568; }
+.hero-btn-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.35);
+}
+.hero-btn-primary:hover { background-color: #1d4ed8; }
+.hero-btn-outline { color: #2563eb; border: 2px solid #2563eb; background: transparent; }
+.hero-btn-outline:hover { background-color: rgba(37,99,235,0.06); }
+.hero-btn-outline-icon { border-color: #2563eb; color: #2563eb; }
+.hero-trust-item { color: #374151; }
+.hero-trust-icon { color: #2563eb; }
+.hero-photo-main { border: 4px solid #ffffff; background: #e2eaff; }
+.hero-stat-badge { background: #ffffff; border: 1px solid #e5e7eb; }
+.hero-stat-icon { background: #eff6ff; color: #2563eb; }
+.hero-stat-value { color: #0d1a2d; }
+.hero-stat-label { color: #6b7280; }
+.hero-review-badge { background: #ffffff; border: 1px solid #e5e7eb; }
+.hero-review-text { color: #374151; }
+
+/* ── Landing header (light, on white bg) ────────────────── */
+.landing-header-light {
+  background: rgba(255,255,255,0.95);
+  border-bottom: 1px solid #e5e7eb;
+}
+.landing-header-light .header-logo { color: #0d1a2d; }
+.landing-header-light .header-nav-link { color: #4a5568; }
+.landing-header-light .header-nav-link:hover { color: #0d1a2d; }
+.landing-header-light .header-cta-signin { color: #2563eb; }
+.landing-header-light .header-cta-btn {
+  background: #2563eb;
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+}
+.landing-header-light .header-cta-btn:hover { background: #1d4ed8; }
+
+/* ── Other landing sections on white ───────────────────── */
+.landing-light section {
+  background-color: #ffffff;
+}
+/* Alternate sections get a very subtle off-white tint */
+.landing-light section:nth-child(even) {
+  background-color: #f7f9ff;
+}
+/* Section headings */
+.landing-light h2, .landing-light h3 {
+  color: #0d1a2d;
+}
+/* Section body text */
+.landing-light p {
+  color: #4a5568;
+}
+/* Cards on light bg */
+.landing-light .bg-card {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+  color: #0d1a2d;
+}
+/* Muted text */
+.landing-light .text-muted-foreground {
+  color: #6b7280;
+}
+/* Primary accent colour stays blue */
+.landing-light .text-primary { color: #2563eb; }
+.landing-light .bg-primary { background-color: #2563eb; }
+.landing-light .border-primary { border-color: #2563eb; }
+
+/* ── Banking Slider section ─────────────────────────────── */
+.banking-slider-section {
+  background-color: #f0f5ff;
+}
+
+.banking-slider-tag {
+  background-color: #dde8ff;
+  color: #2563eb;
+}
+
+.banking-slider-heading {
+  color: #0d1a2d;
+}
+
+.banking-slider-sub {
+  color: #4a5568;
+}
+
+.banking-slider-frame {
+  border: 2px solid #dde8ff;
+}
+
+.banking-slider-img {
+  height: 420px;
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .banking-slider-img { height: 520px; }
+}
+
+.banking-slider-overlay {
+  background: linear-gradient(
+    to bottom,
+    transparent 30%,
+    rgba(13, 26, 45, 0.55) 70%,
+    rgba(13, 26, 45, 0.88) 100%
+  );
+}
+
+.banking-slider-badge {
+  background-color: rgba(37, 99, 235, 0.85);
+  color: #ffffff;
+  backdrop-filter: blur(6px);
+}
+
+.banking-slider-arrow {
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #0d1a2d;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  backdrop-filter: blur(4px);
+}
+.banking-slider-arrow:hover {
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.banking-slider-progress-bg {
+  background-color: rgba(255,255,255,0.2);
+}
+.banking-slider-progress-bar {
+  background-color: #2563eb;
+}
+
+.banking-slider-thumb-active-ring {
+  box-shadow: 0 0 0 2px #2563eb;
+}
+
+.banking-slider-counter {
+  color: #4a5568;
+}
+
+/* FAQ accordion on light bg */
+.landing-light #faq .border-border {
+  border-color: #e5e7eb;
+}
+.landing-light #faq [data-state] button {
+  color: #0d1a2d;
+}
+.landing-light #faq [data-state] button:hover {
+  color: #2563eb;
+}
+
+/* Security section card on light bg */
+.landing-light #security .bg-card,
+.landing-light #security .bg-secondary {
+  background-color: #f0f5ff;
+  border-color: #dde8ff;
+}
+.landing-light #security .text-foreground { color: #0d1a2d; }
+
+/* Accounts section cards */
+.landing-light #accounts .bg-card { background-color: #ffffff; border-color: #e5e7eb; }
+.landing-light #accounts .bg-secondary { background-color: #f0f5ff; }
+
+/* Testimonials cards */
+.landing-light .rounded-2xl.border.border-border.bg-card {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+}
+
+/* HowItWorks stat cards */
+.landing-light .rounded-2xl.border.border-border.bg-card.p-6 {
+  background-color: #f7f9ff;
+  border-color: #dde8ff;
+}
+
+/* Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
 }

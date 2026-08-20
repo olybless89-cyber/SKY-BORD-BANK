@@ -23,7 +23,6 @@ import defusedxml.minidom
 
 
 def get_slides_in_sldidlst(unpacked_dir: Path) -> set[str]:
-    """Return the set of slide filenames referenced in the presentation's <p:sldIdLst>."""
     pres_path = unpacked_dir / "ppt" / "presentation.xml"
     pres_rels_path = unpacked_dir / "ppt" / "_rels" / "presentation.xml.rels"
 
@@ -46,10 +45,6 @@ def get_slides_in_sldidlst(unpacked_dir: Path) -> set[str]:
 
 
 def remove_orphaned_slides(unpacked_dir: Path) -> list[str]:
-    """Delete slide files not listed in <p:sldIdLst> and update presentation.xml.rels.
-
-    Returns a list of relative paths that were removed.
-    """
     slides_dir = unpacked_dir / "ppt" / "slides"
     slides_rels_dir = slides_dir / "_rels"
     pres_rels_path = unpacked_dir / "ppt" / "_rels" / "presentation.xml.rels"
@@ -92,10 +87,6 @@ def remove_orphaned_slides(unpacked_dir: Path) -> list[str]:
 
 
 def remove_trash_directory(unpacked_dir: Path) -> list[str]:
-    """Remove all files inside the [trash] directory and the directory itself.
-
-    Returns a list of relative paths that were removed.
-    """
     trash_dir = unpacked_dir / "[trash]"
     removed = []
 
@@ -111,7 +102,6 @@ def remove_trash_directory(unpacked_dir: Path) -> list[str]:
 
 
 def get_slide_referenced_files(unpacked_dir: Path) -> set:
-    """Return the set of resolved file paths referenced by all slide .rels files."""
     referenced = set()
     slides_rels_dir = unpacked_dir / "ppt" / "slides" / "_rels"
 
@@ -134,10 +124,6 @@ def get_slide_referenced_files(unpacked_dir: Path) -> set:
 
 
 def remove_orphaned_rels_files(unpacked_dir: Path) -> list[str]:
-    """Remove .rels files in charts/diagrams/drawings that point to non-existent or unreferenced resources.
-
-    Returns a list of relative paths that were removed.
-    """
     resource_dirs = ["charts", "diagrams", "drawings"]
     removed = []
     slide_referenced = get_slide_referenced_files(unpacked_dir)
@@ -165,7 +151,6 @@ def remove_orphaned_rels_files(unpacked_dir: Path) -> list[str]:
 
 
 def get_referenced_files(unpacked_dir: Path) -> set:
-    """Return the set of all resolved file paths referenced by any .rels file in the directory tree."""
     referenced = set()
 
     for rels_file in unpacked_dir.rglob("*.rels"):
@@ -184,10 +169,6 @@ def get_referenced_files(unpacked_dir: Path) -> set:
 
 
 def remove_orphaned_files(unpacked_dir: Path, referenced: set) -> list[str]:
-    """Remove media, embeddings, charts, themes, and notes files not present in ``referenced``.
-
-    Returns a list of relative paths that were removed.
-    """
     resource_dirs = [
         "media",
         "embeddings",
@@ -246,7 +227,6 @@ def remove_orphaned_files(unpacked_dir: Path, referenced: set) -> list[str]:
 
 
 def update_content_types(unpacked_dir: Path, removed_files: list[str]) -> None:
-    """Remove Override entries from [Content_Types].xml for every path in ``removed_files``."""
     ct_path = unpacked_dir / "[Content_Types].xml"
     if not ct_path.exists():
         return
@@ -267,14 +247,6 @@ def update_content_types(unpacked_dir: Path, removed_files: list[str]) -> None:
 
 
 def clean_unused_files(unpacked_dir: Path) -> list[str]:
-    """Remove all unreferenced files from an unpacked PPTX directory.
-
-    Iteratively removes orphaned slides, [trash] directory contents, orphaned
-    .rels files, and unreferenced media/embedding/theme/notes files until no
-    more can be found.  Updates [Content_Types].xml to match.
-
-    Returns a list of all removed relative paths.
-    """
     all_removed = []
 
     slides_removed = remove_orphaned_slides(unpacked_dir)

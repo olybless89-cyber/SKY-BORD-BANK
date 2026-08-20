@@ -1,33 +1,8 @@
-# SKY-BORD BANK
+# Welcome to Your Miaoda Project
 
-A premium digital banking platform built with React + Vite + TypeScript + Tailwind CSS + Supabase.
+## Project Info
 
-## Live Demo
-Deployed on Railway — see the Railway dashboard for the public URL.
-
-## Tech Stack
-- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui
-- **Backend**: Supabase (Auth, PostgreSQL, Storage, RLS)
-- **Design**: Dark teal institutional theme (`#027976`), Montserrat + Inter fonts
-
-## Features
-- 🏦 Full banking UI: accounts, transactions, investments, transfers
-- 🔐 Username + PIN authentication (Supabase Auth)
-- 📊 Dashboard: overview, transactions, investments, profile
-- 🌐 Public pages: home, all service pages, contact, investment plans
-- 📱 Responsive layout with mobile sheet navigation
-
-## Environment Variables
-Copy `.env.example` to `.env` and fill in your Supabase credentials:
-```
-VITE_SUPABASE_URL=https://your-project-ref.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
-```
-
-## Railway Deployment
-Railway auto-detects the `nixpacks.toml` config. Set the following environment variables in your Railway service:
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
+## Project Directory
 
 ```
 ├── README.md # Documentation

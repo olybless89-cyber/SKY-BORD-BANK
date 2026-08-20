@@ -4,7 +4,7 @@
 
 | Property | Value |
 |----------|-------|
-| Endpoint | `POST https://app-dlavm6ky20ap-api-GYX1lzGw01Xa.gateway.appmedo.com/v1/audio/speech` |
+| Endpoint | `POST https://app-dptqkburek1u-api-GYX1lzGw01Xa.gateway.appmedo.com/v1/audio/speech` |
 | HTTP Method | `POST` |
 | Request Content-Type | `application/json` |
 | Auth Header | `X-Gateway-Authorization: Bearer <AUTH_VALUE>` |
@@ -112,7 +112,7 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   // --- Call upstream ---
-  const upstream = await fetch("https://app-dlavm6ky20ap-api-GYX1lzGw01Xa.gateway.appmedo.com/v1/audio/speech", {
+  const upstream = await fetch("https://app-dptqkburek1u-api-GYX1lzGw01Xa.gateway.appmedo.com/v1/audio/speech", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

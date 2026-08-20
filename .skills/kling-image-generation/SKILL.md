@@ -12,8 +12,8 @@ Powered by Kling AI, this skill submits image generation tasks and polls for res
 
 | Item | Details |
 |------|---------|
-| Create Task Endpoint | `POST https://app-dlavm6ky20ap-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations` |
-| Query Task Endpoint | `GET https://app-dlavm6ky20ap-api-M9v0wzOkZXGY.gateway.appmedo.com/v1/images/generations/{task_id}` |
+| Create Task Endpoint | `POST https://app-dptqkburek1u-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations` |
+| Query Task Endpoint | `GET https://app-dptqkburek1u-api-M9v0wzOkZXGY.gateway.appmedo.com/v1/images/generations/{task_id}` |
 | Authentication | Platform-managed — key injected via `INTEGRATIONS_API_KEY` |
 | Note | Create task endpoint is billed; query endpoint is free |
 | Async Mode | Returns `task_id` on submission; poll until `task_status` is `succeed` or `failed` |
@@ -52,89 +52,49 @@ async function generateAndWait(submitFn: () => Promise<{ taskId: string }>) {
 
 ## Generation-Time Usage (Agent Direct Call)
 
-> For detailed parameter descriptions, see `references/create-task-api.md` (create task) and `references/query-task-api.md` (query task).
+Use the built-in scripts for generation-time calls. The scripts read `INTEGRATIONS_API_KEY` from the environment.
 
-A complete generation-time call should follow these steps:
-1. Call `createImageTask()` to submit the generation request and obtain a `task_id`
-2. Poll `queryImageTask(taskId)` until the task completes
-3. Download the image immediately using `curl`
+**The Bash tool timeout MUST be set to 600000ms (600 seconds).**
 
-```typescript
-const apiKey = process.env["INTEGRATIONS_API_KEY"]!; // platform_managed key injected by the platform
+**Submit + poll (all-in-one):**
 
-// Step 1: Submit image generation task
-async function createImageTask(params: {
-  prompt: string;
-  model_name?: string;
-  negative_prompt?: string;
-  image?: string;
-  image_fidelity?: number;
-  element_list?: Array<{ element_id: number }>;
-  resolution?: string;
-  n?: number;
-  aspect_ratio?: string;
-  watermark_info?: { enabled: boolean };
-  callback_url?: string;
-  external_task_id?: string;
-}): Promise<{ task_id: string; task_status: string }> {
-  const response = await fetch(
-    "https://app-dlavm6ky20ap-api-DY8MnRlwkXKa.gateway.appmedo.com/v1/images/generations",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Gateway-Authorization": `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(params),
-    }
-  );
-  if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-  const json = await response.json();
-  if (json.code !== 0) throw new Error(`API error ${json.code}: ${json.message}`);
-  return json.data;
-}
+```bash
+# Text-to-image
+python3 <skill-path>/scripts/generate_image.py \
+  --prompt "A serene mountain lake at sunrise, photorealistic" \
+  --aspect-ratio 16:9 \
+  -n 1 \
+  --output-dir /tmp/kling_images
 
-// Step 2: Query task status
-async function queryImageTask(taskId: string): Promise<{
-  task_id: string;
-  task_status: string;
-  task_status_msg?: string;
-  task_result?: { images: Array<{ index: number; url: string; watermark_url?: string }> };
-}> {
-  const response = await fetch(
-    `https://app-dlavm6ky20ap-api-M9v0wzOkZXGY.gateway.appmedo.com/v1/images/generations/${taskId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Gateway-Authorization": `Bearer ${apiKey}`,
-      },
-    }
-  );
-  if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-  const json = await response.json();
-  if (json.code !== 0) throw new Error(`API error ${json.code}: ${json.message}`);
-  return json.data;
-}
+# With a reference image (local file or URL)
+python3 <skill-path>/scripts/generate_image.py \
+  --prompt "Same subject in watercolor style" \
+  --image /path/to/reference.jpg \
+  --image-fidelity 0.5 \
+  --output-dir /tmp/kling_images
 ```
+
+**Resume polling an existing task:**
+
+```bash
+python3 <skill-path>/scripts/query_image.py --task-id "<task_id>" --output-dir /tmp/kling_images
+```
+
+The scripts print one JSON line:
+- On success: `{"status":"succeed","task_id":"...","images":[{"url":"...","file":"..."}]}`
+- If still processing: `{"status":"processing","task_id":"..."}`
+
+On failure they print an error to stderr and exit with a non-zero code.
 
 **Generation-Time File Download (required):**
 
-Image URLs returned by the generation API are temporary CDN links (expire after 30 days). After obtaining the URL at generation time (Agent direct call scenario), **you must immediately use the Bash tool to download the file locally** so the user can view the result.
+Image URLs are temporary CDN links (expire after 30 days). If `--output-dir` is not passed to the script, download the image immediately:
 
 ```bash
 curl -L -o <local-path>.jpg "<generated image URL>"
 ```
 
-**Complete Generation-Time Workflow (including download step):**
-
-1. Call `createImageTask()` to submit the task and obtain `task_id`
-2. Call `queryImageTask(taskId)` every 7 seconds until `task_status === "succeed"` or `"failed"`
-3. Extract image URLs from `task_result.images[].url`
-4. Run `curl -L -o <local-path>.jpg "<url>"` via the Bash tool to download the image locally
-5. Inform the user that the file has been saved to the corresponding path
-
-> **Note**: Upstream CDN links expire after 30 days. Download immediately upon receiving the URL — do not delay.
+> For detailed parameter descriptions, see `references/create-task-api.md` (create task) and `references/query-task-api.md` (query task).
 
 ## Post-Generation Usage (In-App via Edge Function)
 

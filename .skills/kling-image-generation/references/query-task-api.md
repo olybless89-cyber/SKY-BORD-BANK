@@ -4,7 +4,7 @@
 
 | Item | Details |
 |------|---------|
-| Endpoint | `GET https://app-dlavm6ky20ap-api-M9v0wzOkZXGY.gateway.appmedo.com/v1/images/generations/{task_id}` |
+| Endpoint | `GET https://app-dptqkburek1u-api-M9v0wzOkZXGY.gateway.appmedo.com/v1/images/generations/{task_id}` |
 | Function | Query the status and result of a single image generation task. Returns image URLs once the task completes. |
 | Note | Used only to poll task status; not billed |
 
@@ -44,47 +44,17 @@
 
 ## Generation-Time Usage (Agent Direct Call)
 
-```typescript
-const apiKey = process.env["INTEGRATIONS_API_KEY"]!;
-
-async function queryImageTask(taskId: string): Promise<{
-  task_id: string;
-  task_status: string;
-  task_status_msg?: string;
-  task_result?: {
-    images: Array<{ index: number; url: string; watermark_url?: string }>;
-  };
-}> {
-  const response = await fetch(
-    `https://app-dlavm6ky20ap-api-M9v0wzOkZXGY.gateway.appmedo.com/v1/images/generations/${taskId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Gateway-Authorization": `Bearer ${apiKey}`,
-      },
-    }
-  );
-  if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-  const json = await response.json();
-  if (json.code !== 0) throw new Error(`API error ${json.code}: ${json.message}`);
-  return json.data;
-}
-```
-
-**Generation-Time File Download (required):**
-
-After the task succeeds, `task_result.images[].url` is a temporary CDN link (expires after 30 days). **You must immediately use the Bash tool to download the files locally.**
+Use the built-in script to poll an existing task — do not hand-write TypeScript request code. Bash tool timeout must be set to `600000` ms.
 
 ```bash
-# Download a single image
-curl -L -o ./generated_image_0.jpg "<task_result.images[0].url>"
-
-# Batch download (when n > 1)
-for i in 0 1 2; do
-  curl -L -o "./generated_image_${i}.jpg" "<task_result.images[$i].url>"
-done
+python3 <skill-path>/scripts/query_image.py --task-id "<task_id>" [--output-dir /tmp/out]
 ```
+
+The script polls the task every 7 seconds (up to ~550s) and prints one JSON line:
+- Success: `{"status":"succeed","task_id":"...","images":[{"url":"...","file":"..."}]}`
+- Still processing: `{"status":"processing","task_id":"..."}`
+
+On failure it prints an error to stderr and exits with a non-zero code.
 
 ## Post-Generation Usage (Edge Function)
 
@@ -158,7 +128,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    `https://app-dlavm6ky20ap-api-M9v0wzOkZXGY.gateway.appmedo.com/v1/images/generations/${taskId}`,
+    `https://app-dptqkburek1u-api-M9v0wzOkZXGY.gateway.appmedo.com/v1/images/generations/${taskId}`,
     {
       method: "GET",
       headers: {

@@ -27,7 +27,7 @@ import urllib.request
 import urllib.error
 
 
-QUERY_URL = "https://app-dlavm6ky20ap-api-GYX1lzGw0DQa.gateway.appmedo.com/image-generation/task"
+QUERY_URL = "https://app-dptqkburek1u-api-GYX1lzGw0DQa.gateway.appmedo.com/image-generation/task"
 
 POLL_INTERVAL_S = 7
 SAFE_LIMIT_S = 550  # stay under the default timeout

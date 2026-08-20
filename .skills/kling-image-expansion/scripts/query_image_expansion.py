@@ -22,7 +22,7 @@ import urllib.parse
 import urllib.request
 
 
-QUERY_URL_BASE = "https://app-dlavm6ky20ap-api-AalZkkAG5w7L.gateway.appmedo.com/v1/images/editing/expand"
+QUERY_URL_BASE = "https://app-dptqkburek1u-api-AalZkkAG5w7L.gateway.appmedo.com/v1/images/editing/expand"
 POLL_INTERVAL_S = 7
 SAFE_LIMIT_S = 550
 

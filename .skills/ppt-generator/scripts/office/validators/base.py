@@ -10,13 +10,6 @@ import lxml.etree
 
 
 class BaseSchemaValidator:
-    """Base class providing common OOXML validation logic for DOCX, PPTX, and XLSX files.
-
-    Validates XML well-formedness, namespace consistency, ID uniqueness, file references,
-    content-type declarations, and schema conformance against bundled XSD files.
-    Subclasses add format-specific checks by overriding ``validate()``.
-    """
-
     IGNORED_VALIDATION_ERRORS = [
         "hyphenationZone",
         "purl.org/dc/terms",
@@ -98,13 +91,6 @@ class BaseSchemaValidator:
     }
 
     def __init__(self, unpacked_dir, original_file=None, verbose=False):
-        """Initialise the validator with paths and collect all XML/rels files.
-
-        Args:
-            unpacked_dir: Directory containing the extracted Office document files.
-            original_file: Original packed file used as a XSD-error baseline.
-            verbose: Whether to print passing-check messages.
-        """
         self.unpacked_dir = Path(unpacked_dir).resolve()
         self.original_file = Path(original_file) if original_file else None
         self.verbose = verbose
@@ -120,18 +106,12 @@ class BaseSchemaValidator:
             print(f"Warning: No XML files found in {self.unpacked_dir}")
 
     def validate(self):
-        """Run all validation checks and return True if the document is valid."""
         raise NotImplementedError("Subclasses must implement the validate method")
 
     def repair(self) -> int:
-        """Attempt auto-repair of common issues and return the number of repairs made."""
         return self.repair_whitespace_preservation()
 
     def repair_whitespace_preservation(self) -> int:
-        """Add xml:space="preserve" to text elements whose content starts or ends with whitespace.
-
-        Returns the number of elements repaired.
-        """
         repairs = 0
 
         for xml_file in self.xml_files:
@@ -170,7 +150,6 @@ class BaseSchemaValidator:
         return repairs
 
     def validate_xml(self):
-        """Verify that every XML/rels file is well-formed.  Returns True if all pass."""
         errors = []
 
         for xml_file in self.xml_files:
@@ -196,7 +175,6 @@ class BaseSchemaValidator:
             return True
 
     def validate_namespaces(self):
-        """Check that every namespace prefix listed in mc:Ignorable is declared on the root element."""
         errors = []
 
         for xml_file in self.xml_files:
@@ -225,7 +203,6 @@ class BaseSchemaValidator:
         return True
 
     def validate_unique_ids(self):
-        """Verify that IDs defined in UNIQUE_ID_REQUIREMENTS are unique within their required scope."""
         errors = []
         global_ids = {}
 
@@ -317,7 +294,6 @@ class BaseSchemaValidator:
             return True
 
     def validate_file_references(self):
-        """Verify all relationship targets resolve to existing files and no files are unreferenced."""
         errors = []
 
         rels_files = list(self.unpacked_dir.rglob("*.rels"))
@@ -412,7 +388,6 @@ class BaseSchemaValidator:
             return True
 
     def validate_all_relationship_ids(self):
-        """Verify that every r:id/r:embed/r:link attribute references a declared relationship ID."""
         import lxml.etree
 
         errors = []
@@ -500,7 +475,6 @@ class BaseSchemaValidator:
             return True
 
     def _get_expected_relationship_type(self, element_name):
-        """Infer the expected relationship type string for an element from ELEMENT_RELATIONSHIP_TYPES."""
         elem_lower = element_name.lower()
 
         if elem_lower in self.ELEMENT_RELATIONSHIP_TYPES:
@@ -524,7 +498,6 @@ class BaseSchemaValidator:
         return None
 
     def validate_content_types(self):
-        """Check that all key XML files and media are declared in [Content_Types].xml."""
         errors = []
 
         content_types_file = self.unpacked_dir / "[Content_Types].xml"
@@ -635,16 +608,6 @@ class BaseSchemaValidator:
             return True
 
     def validate_file_against_xsd(self, xml_file, verbose=False):
-        """Validate a single XML file against its XSD schema, reporting only *new* errors.
-
-        Compares errors in the modified file against errors in the original file so that
-        pre-existing schema violations are not reported.
-
-        Returns:
-            (True, set()) if valid or no new errors;
-            (False, {error_messages}) if new errors are found;
-            (None, set()) if no matching schema is available.
-        """
         xml_file = Path(xml_file).resolve()
         unpacked_dir = self.unpacked_dir.resolve()
 
@@ -684,7 +647,6 @@ class BaseSchemaValidator:
             return True, set()
 
     def validate_against_xsd(self):
-        """Validate all XML files against bundled XSD schemas, reporting only newly introduced errors."""
         new_errors = []
         original_error_count = 0
         valid_count = 0
@@ -737,7 +699,6 @@ class BaseSchemaValidator:
             return True
 
     def _get_schema_path(self, xml_file):
-        """Return the Path to the XSD schema for the given XML file, or None if not mapped."""
         if xml_file.name in self.SCHEMA_MAPPINGS:
             return self.schemas_dir / self.SCHEMA_MAPPINGS[xml_file.name]
 
@@ -756,7 +717,6 @@ class BaseSchemaValidator:
         return None
 
     def _clean_ignorable_namespaces(self, xml_doc):
-        """Return a copy of the document with non-OOXML namespace attributes and elements removed."""
         xml_string = lxml.etree.tostring(xml_doc, encoding="unicode")
         xml_copy = lxml.etree.fromstring(xml_string)
 
@@ -777,7 +737,6 @@ class BaseSchemaValidator:
         return lxml.etree.ElementTree(xml_copy)
 
     def _remove_ignorable_elements(self, root):
-        """Recursively remove child elements whose namespace is not in OOXML_NAMESPACES."""
         elements_to_remove = []
 
         for elem in list(root):
@@ -797,7 +756,6 @@ class BaseSchemaValidator:
             root.remove(elem)
 
     def _preprocess_for_mc_ignorable(self, xml_doc):
-        """Strip the mc:Ignorable attribute from the document root before XSD validation."""
         root = xml_doc.getroot()
 
         if f"{{{self.MC_NAMESPACE}}}Ignorable" in root.attrib:
@@ -806,10 +764,6 @@ class BaseSchemaValidator:
         return xml_doc
 
     def _validate_single_file_xsd(self, xml_file, base_path):
-        """Validate one XML file against its schema, returning (is_valid, error_set).
-
-        Returns (None, None) when no schema is available for the file.
-        """
         schema_path = self._get_schema_path(xml_file)
         if not schema_path:
             return None, None
@@ -847,7 +801,6 @@ class BaseSchemaValidator:
             return False, {str(e)}
 
     def _get_original_file_errors(self, xml_file):
-        """Extract XSD errors for the corresponding file inside the original packed document."""
         if self.original_file is None:
             return set()
 
@@ -875,10 +828,6 @@ class BaseSchemaValidator:
             return errors if errors else set()
 
     def _remove_template_tags_from_text_nodes(self, xml_doc):
-        """Strip {{template}} placeholders from non-<t> text nodes to avoid spurious XSD errors.
-
-        Returns a tuple of (modified_ElementTree, list_of_warning_strings).
-        """
         warnings = []
         template_pattern = re.compile(r"\{\{[^}]*\}\}")
 
@@ -886,7 +835,6 @@ class BaseSchemaValidator:
         xml_copy = lxml.etree.fromstring(xml_string)
 
         def process_text_content(text, content_type):
-            """Strip {{template}} placeholders from a single text string and log warnings."""
             if not text:
                 return text
             matches = list(template_pattern.finditer(text))

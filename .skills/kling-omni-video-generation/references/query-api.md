@@ -4,7 +4,7 @@
 
 | Property | Value |
 |----------|-------|
-| Endpoint | `GET https://app-dlavm6ky20ap-api-pLVzAEz1ZQOL.gateway.appmedo.com/v1/videos/omni-video/{task_id}` |
+| Endpoint | `GET https://app-dptqkburek1u-api-pLVzAEz1ZQOL.gateway.appmedo.com/v1/videos/omni-video/{task_id}` |
 | HTTP Method | `GET` |
 | Request Header Content-Type | `application/json` |
 | Authorization Header | `X-Gateway-Authorization: Bearer ${INTEGRATIONS_API_KEY}` |
@@ -170,7 +170,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    `https://app-dlavm6ky20ap-api-pLVzAEz1ZQOL.gateway.appmedo.com/v1/videos/omni-video/${encodeURIComponent(taskId)}`,
+    `https://app-dptqkburek1u-api-pLVzAEz1ZQOL.gateway.appmedo.com/v1/videos/omni-video/${encodeURIComponent(taskId)}`,
     {
       method: "GET",
       headers: {

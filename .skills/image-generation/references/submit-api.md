@@ -5,7 +5,7 @@
 | Field | Value |
 |-------|-------|
 | Method | `POST` |
-| URL | `https://app-dlavm6ky20ap-api-zYkZzKQJrBdL.gateway.appmedo.com/image-generation/submit` |
+| URL | `https://app-dptqkburek1u-api-zYkZzKQJrBdL.gateway.appmedo.com/image-generation/submit` |
 | Content-Type | `application/json` |
 | Auth | `X-Gateway-Authorization: Bearer <key>` |
 
@@ -114,7 +114,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    "https://app-dlavm6ky20ap-api-zYkZzKQJrBdL.gateway.appmedo.com/image-generation/submit",
+    "https://app-dptqkburek1u-api-zYkZzKQJrBdL.gateway.appmedo.com/image-generation/submit",
     {
       method: "POST",
       headers: {

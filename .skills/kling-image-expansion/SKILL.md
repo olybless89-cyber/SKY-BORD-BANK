@@ -12,9 +12,9 @@ Powered by Kling AI, this skill submits image expansion tasks and polls for resu
 
 | Item | Details |
 |------|---------|
-| Create Task Endpoint | `POST https://app-dlavm6ky20ap-api-GYX1bbkRQj4a.gateway.appmedo.com/v1/images/editing/expand` |
-| Query Task (Single) Endpoint | `GET https://app-dlavm6ky20ap-api-AalZkkAG5w7L.gateway.appmedo.com/v1/images/editing/expand/{task_id}` |
-| Query Task (List) Endpoint | `GET https://app-dlavm6ky20ap-api-pLVzAAkGZwDL.gateway.appmedo.com/v1/images/editing/expand` |
+| Create Task Endpoint | `POST https://app-dptqkburek1u-api-GYX1bbkRQj4a.gateway.appmedo.com/v1/images/editing/expand` |
+| Query Task (Single) Endpoint | `GET https://app-dptqkburek1u-api-AalZkkAG5w7L.gateway.appmedo.com/v1/images/editing/expand/{task_id}` |
+| Query Task (List) Endpoint | `GET https://app-dptqkburek1u-api-pLVzAAkGZwDL.gateway.appmedo.com/v1/images/editing/expand` |
 | Authentication | Platform-managed — key injected via `INTEGRATIONS_API_KEY` |
 | Billing | Create task endpoint is billed on task creation only; query endpoints are free |
 | Async Mode | Returns `task_id` after submission; poll until `task_status` becomes `succeed` or `failed` |

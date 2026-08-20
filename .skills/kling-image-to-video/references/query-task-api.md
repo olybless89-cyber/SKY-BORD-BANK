@@ -11,7 +11,7 @@ Query the status and result of a previously submitted image-to-video generation 
 
 | Property | Value |
 |----------|-------|
-| **Endpoint** | `GET https://app-dlavm6ky20ap-api-rLobzpqX85m9.gateway.appmedo.com/v1/videos/image2video/{id}` |
+| **Endpoint** | `GET https://app-dptqkburek1u-api-rLobzpqX85m9.gateway.appmedo.com/v1/videos/image2video/{id}` |
 | **Content-Type** | `application/json` |
 | **Auth** | `X-Gateway-Authorization: Bearer ${INTEGRATIONS_API_KEY}` |
 
@@ -170,7 +170,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    `https://app-dlavm6ky20ap-api-rLobzpqX85m9.gateway.appmedo.com/v1/videos/image2video/${taskId}`,
+    `https://app-dptqkburek1u-api-rLobzpqX85m9.gateway.appmedo.com/v1/videos/image2video/${taskId}`,
     {
       method: "GET",
       headers: {

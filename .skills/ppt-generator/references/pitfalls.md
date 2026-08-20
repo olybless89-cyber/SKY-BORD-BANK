@@ -1,109 +1,109 @@
-# Layout Pitfalls & Fix Guide
+# 布局陷阱与修复指南
 
-PptxGenJS has no collision detection. Overlapping elements produce no errors, no repositioning, and no warnings. This file documents all known layout issues, causes, and fixes.
+PptxGenJS 没有碰撞检测，元素重叠时不报错、不移位、完全无提示。本文件集中记录所有已知的布局问题、原因和修法。
 
 ---
 
-## ⚠️ Frequent Issues (Check Every Generation)
+## ⚠️ 高频问题（每次生成必查）
 
-These issues appear in nearly every generation — **you must build defensive habits before writing any slide code**.
+以下问题在每次生成中几乎必然出现，**在写任何幻灯片代码之前必须建立防御意识**。
 
-### 1. Text Wrapping
+### 1. 文字换行 / Text Wrapping
 
-**Root cause**: `h` is a hard-coded number, but the actual number of text lines is determined by font size × content length × text box width — all of which vary at runtime. PptxGenJS does not auto-expand text boxes — text that exceeds `h` is either clipped or forces line breaks.
+**根本原因**：`h` 是一个写死的数字，但实际文字行数由字号 × 内容长度 × 文本框宽度共同决定，运行时随内容变化。PptxGenJS 不会自动撑高文本框——文字超出 `h` 时直接被截断，或换行后挤压成多行。
 
-**⚠️ Single-line text box size warning**: Any text box expected to show only one line (**cover titles, numeric callouts `01`/`02`, card titles, icon labels, regardless of font size**) is extremely prone to unexpected wrapping when `w` or `h` is too small. **The most common error is `w = h` (square) — a square is almost always too narrow for two-digit characters, causing `0` and `1` to wrap onto separate lines. Another common error is forgetting `margin: 0` and `shrinkText: true` on large cover/section titles — default padding consumes ~0.2" of effective width, very likely to wrap at large font sizes.**
+**⚠️ 单行文本框尺寸警告**：任何预期只显示一行的文本框（**封面大标题、数字标注 `01`/`02`、卡片标题、图标标签等，不论字号大小**）都极易因 `w` 或 `h` 设置过小而意外换行。**最常见的错误是 `w = h`（正方形）——正方形对两位字符几乎总是不够宽，`0` 和 `1` 会各占一行。另一个常见错误是封面/章节大标题忘加 `margin: 0` 和 `shrinkText: true`，默认内边距会吃掉约 0.2" 有效宽度，大字号下极易换行。**
 
-**⚠️ `shrinkText: true` does not prevent wrapping**: `shrinkText` only shrinks the font size to fit the **height (h)**, not the **width (w)**. If `w` is too narrow, text wraps first ("0"/"2" each on their own line), then both lines get crammed into `h`, and `shrinkText` stops shrinking since the height fits — result: normal font size but already wrapped. **The only way to prevent wrapping is to ensure `w` is wide enough.**
+**⚠️ `shrinkText: true` 不能防止换行**：`shrinkText` 只收缩字号来适应**高度（h）**，不管**宽度（w）**。若 `w` 不够宽，文字会先换行（"0"/"2" 各占一行），然后两行都塞进 `h` 里，`shrinkText` 看到高度够就停止收缩——结果是字号正常但已换行。**防止换行的唯一手段是保证 `w` 足够宽。**
 
-All single-line text boxes must satisfy both:
+所有单行文本框必须同时满足：
 
-- `h ≥ fontSize × 1.4 / 72 + 0.1` (rule of thumb: 14pt→0.37", 18pt→0.45", 24pt→0.57", 60pt→1.27")
-- `w ≥ charCount × fontSize × 0.75 / 72 + 0.2` (rule of thumb: 2 chars 18pt→0.53", 2 chars 24pt→0.65", 2 chars 60pt→1.45"); **`w = h` is forbidden**
-- Must include `shrinkText: true` (prevents clipping, but not wrapping — requires `w` to already be sufficient)
-- **Number + unit combinations (`95%`, `60%`, `$3B`, etc.) must calculate `w` based on the full string length**, including the unit symbol (`95%` = 3 characters); missing the unit causes `%` to be pushed to the next line
+- `h ≥ fontSize × 1.4 / 72 + 0.1`（经验值：14pt→0.37"，18pt→0.45"，24pt→0.57"，60pt→1.27"）
+- `w ≥ 字符数 × fontSize × 0.75 / 72 + 0.2`（经验值：2字符18pt→0.53"，2字符24pt→0.65"，2字符60pt→1.45"）；**禁止 `w = h`**
+- 必须加 `shrinkText: true`（防截断，但不防换行，前提是 w 已足够）
+- **数字+单位组合（`95%`、`60%`、`$3B` 等）的 `w` 必须按完整字符串长度计算**，包含单位符号在内（`95%` = 3个字符）；漏算单位符号会导致 `%` 被挤到下一行
 
 ```javascript
-// ❌ Wrong: w = h = 0.5", square — "01" will break into two lines
+// ❌ 错误：w = h = 0.5"，正方形，"01" 会断成两行
 slide.addText("01", { w: 0.5, h: 0.5, fontSize: 24, ... });
 
-// ✅ Correct: w calculated by character formula, clearly wider than h
+// ✅ 正确：w 按字符公式算，明显宽于 h
 slide.addText("01", {
   x: 0.3, y: 1.2,
-  w: 0.75,   // 2 chars × 24pt: 2×24×0.75/72+0.2 ≈ 0.70", use 0.75" for margin
+  w: 0.75,   // 2字符×24pt：2×24×0.75/72+0.2 ≈ 0.70"，取 0.75" 留余量
   h: 0.55,   // 24pt×1.4/72+0.1 ≈ 0.57"
   fontSize: 24, bold: true, align: "center", valign: "middle",
   shrinkText: true, margin: 0,
 });
 ```
 
-**Three-tier defense strategy — must explicitly choose one; defaulting is not allowed**:
+**三档防御策略，必须选一档明确使用，不允许缺省**：
 
 ```javascript
-// ① Fixed-position labels (numeric callouts, card titles, legends) → shrinkText
-//    Auto-shrinks font when overflowing, ensures single line stays on one line
-slide.addText("Potentially long label", {
+// ① 固定位置标签（数字标注、卡片标题、图例）→ shrinkText
+//    超出时自动缩小字号，保证单行不换行
+slide.addText("可能偏长的标签", {
   x: 0.5, y: 1, w: 3, h: 0.4, fontSize: 12,
-  shrinkText: true,   // ← must be explicitly written
+  shrinkText: true,   // ← 必须显式写
 });
 
-// ② Body/description paragraphs → autoFit
-//    Text box height auto-expands with content, but ensure sufficient space below
-slide.addText("Potentially many lines of body content...", {
+// ② 正文/说明段落 → autoFit
+//    文本框高度随内容自动扩展，但要确保下方有足够空间
+slide.addText("可能有很多行的正文内容...", {
   x: 0.5, y: 1.5, w: 8, h: 0.5, fontSize: 12,
-  autoFit: true,      // ← must be explicitly written
+  autoFit: true,      // ← 必须显式写
 });
 
-// ③ Fixed layout with known line count → manually calculate h
-// Rule of thumb: fontSize 10pt ≈ 0.19"/line, 12pt ≈ 0.22"/line, 14pt ≈ 0.26"/line
-// Formula: h = line count × line height + 0.1 (padding buffer)
+// ③ 已知行数的固定布局 → 手动计算 h
+// 经验值：fontSize 10pt ≈ 0.19"/行，12pt ≈ 0.22"/行，14pt ≈ 0.26"/行
+// 公式：h = 行数 × 行高 + 0.1（内边距余量）
 const lines = 3, lineH = 0.26;   // fontSize 14pt
-slide.addText("Three lines of content", { x: 0.5, y: 1, w: 8, h: lines * lineH + 0.1, fontSize: 14 });
+slide.addText("三行内容", { x: 0.5, y: 1, w: 8, h: lines * lineH + 0.1, fontSize: 14 });
 ```
 
-| Scenario | Required |
-| -------- | -------- |
-| Single-line labels (titles, numbers, legends, etc.) | `shrinkText: true` + `h ≥ fontSize×1.4+0.1"` |
-| Body text, descriptions, dynamic content | `autoFit: true` |
-| Fixed card with known line count | Manually calculate `h` |
+| 场景                           | 必须用                                       |
+| ------------------------------ | -------------------------------------------- |
+| 单行标签（标题、编号、图例等） | `shrinkText: true` + `h ≥ fontSize×1.4+0.1"` |
+| 正文、说明、动态内容           | `autoFit: true`                              |
+| 已知行数的固定卡片             | 手动算 `h`                                   |
 
 ---
 
-### 2. Text Overflowing Background Shape
+### 2. 文字超出背景方框 / Text Overflowing Background Shape
 
-**Root cause**: In PptxGenJS, text and background shapes are two completely independent elements. There is no "parent-child containment" relationship. The background rectangle is purely visual decoration with no clipping constraint on the text box — text that overflows the text box renders directly outside the rectangle.
+**根本原因**：PptxGenJS 里文字和背景形状是两个完全独立的元素，不存在"父子包含"关系。背景矩形只是视觉装饰，对文本框没有任何裁剪约束——文字超出文本框后会直接渲染到矩形外面。
 
-**Correct approach: text box dimensions must be strictly bound to the background shape**:
+**正确做法：文本框尺寸必须与背景形状严格绑定**：
 
 ```javascript
-// ── Define card dimensions (single source of truth) ──────────────────────────
+// ── 定义卡片尺寸（单一来源）──────────────────────────
 const card = { x: 1, y: 1.5, w: 3.5, h: 1.8 };
-const PADDING = 0.15;   // Text-to-border padding
+const PADDING = 0.15;   // 文字与边框的内边距
 
-// ── Background shape ─────────────────────────────────────────
+// ── 背景形状 ─────────────────────────────────────────
 slide.addShape(pres.shapes.RECTANGLE, {
   ...card,
   fill: { color: "F0F9FF" },
   line: { color: "BAE6FD", width: 1 },
 });
 
-// ── Text box: derived from card dimensions minus padding, no standalone numbers ─
-slide.addText("Card content text", {
+// ── 文本框：从 card 尺寸减去内边距推导，不单独写数字 ─
+slide.addText("卡片内容文字", {
   x: card.x + PADDING,
   y: card.y + PADDING,
   w: card.w - PADDING * 2,
-  h: card.h - PADDING * 2,   // ← Must be derived from card.h, not hard-coded
+  h: card.h - PADDING * 2,   // ← 必须从 card.h 推导，不写死
   fontSize: 11,
-  shrinkText: true,           // ← Safety net in case content is unexpectedly long
+  shrinkText: true,           // ← 兜底保护，防止内容偶尔超长
 });
 ```
 
-**For batch cards (grids, timeline callouts, etc.)**:
+**批量卡片时（网格、时间轴标注等）**：
 
 ```javascript
 const cards = [
-  { x: 0.5, y: 1.5, label: "Item A", value: "120%" },
-  { x: 4.0, y: 1.5, label: "Item B", value: "89%" },
+  { x: 0.5, y: 1.5, label: "项目A", value: "120%" },
+  { x: 4.0, y: 1.5, label: "项目B", value: "89%" },
 ];
 const CARD_W = 3.2, CARD_H = 1.6, PAD = 0.15;
 
@@ -126,160 +126,160 @@ cards.forEach(c => {
 });
 ```
 
-**Checklist**:
+**核查清单**：
 
-- [ ] Every text box's `x/y/w/h` is derived from its corresponding background shape variable — no standalone hard-coded numbers
-- [ ] All text boxes have `shrinkText: true` or `autoFit: true` as a safety net
-- [ ] After generation, use `markitdown` to extract text and confirm content is complete and untruncated
+- [ ] 每个文本框的 `x/y/w/h` 都从对应背景形状的变量推导，没有独立写死的数字
+- [ ] 所有文本框都有 `shrinkText: true` 或 `autoFit: true` 兜底
+- [ ] 生成后用 `markitdown` 抽取文本，确认内容完整没有截断
 
 ---
 
-## Layout Planning: Required Reading Before Writing Coordinates
+## 版面规划：写坐标之前必读
 
-**All element `x`/`y` coordinates must be derived from named variables — magic numbers are prohibited.**
+**所有元素的 `x`/`y` 坐标必须从命名变量推导，禁止写魔法数字。**
 
 ```javascript
-// ── Slide constants ──────────────────────────────────────────
-const SW = 10;      // Slide width
-const SH = 5.625;   // Slide height (LAYOUT_16x9)
-const PAD = 0.4;    // Page margin
+// ── 页面常量 ──────────────────────────────────────────
+const SW = 10;      // 幻灯片宽度
+const SH = 5.625;   // 幻灯片高度（LAYOUT_16x9）
+const PAD = 0.4;    // 页面边距
 
-// ── Area layout ──────────────────────────────────────────
+// ── 区域划分 ──────────────────────────────────────────
 const TITLE_Y = PAD;
 const TITLE_H = 0.6;
-const BODY_Y  = TITLE_Y + TITLE_H + 0.2;       // Gap below title
-const BODY_H  = SH - BODY_Y - PAD - 0.35;      // Reserve bottom space for page badge
+const BODY_Y  = TITLE_Y + TITLE_H + 0.2;       // 标题下方留间距
+const BODY_H  = SH - BODY_Y - PAD - 0.35;      // 底部留给页码徽章
 const BODY_X  = PAD;
 const BODY_W  = SW - PAD * 2;
 
-// ── For columns ────────────────────────────────────────────
+// ── 分栏时 ────────────────────────────────────────────
 const GAP   = 0.3;
 const COL_W = (BODY_W - GAP) / 2;
 const COL1_X = BODY_X;
 const COL2_X = BODY_X + COL_W + GAP;
 ```
 
-**Boundary rule**: every element's `y + h ≤ BODY_Y + BODY_H`, `x + w ≤ SW - PAD`.
+**边界规则**：任何元素的 `y + h ≤ BODY_Y + BODY_H`，`x + w ≤ SW - PAD`。
 
-### Development-time Bounds Check
+### 开发期边界检查
 
 ```javascript
 function assertBounds(label, x, y, w = 0, h = 0) {
   if (x + w > SW - PAD + 0.01) console.warn(`[overflow-x] ${label}`);
   if (y + h > SH - 0.3  + 0.01) console.warn(`[overflow-y] ${label}`);
 }
-// Call once before placing each element
+// 放置每个元素前调用一次
 assertBounds('chart', 0.5, 1, 9, 4);
 ```
 
 ---
 
-## Text Box Overlaps
+## 文本框互相重叠
 
-**Root cause**: Multiple text boxes in the same area each have hard-coded coordinates with no dependencies. Adjusting one box's dimensions won't move adjacent boxes, causing them to overlap. PptxGenJS doesn't error or reposition — it renders them stacked.
+**根因**：同一区域内的多个文本框各自写死坐标，没有依存关系。任意一个框的尺寸调整后，相邻框的位置不跟着变，导致文字互相压住。PptxGenJS 不报错、不移位，直接叠加渲染。
 
-**Defensive rule: within the same row or column, each subsequent box's starting coordinate must be derived from the previous box.**
+**防御规则：同一行或同一列内，后一个框的起始坐标必须从前一个框推导。**
 
 ```javascript
-// ── Horizontal side-by-side (e.g. badge + title) ────────────────────────────
-const A_X = 0.4, A_W = 0.75;   // First element
+// ── 横向并排（如徽章 + 标题）────────────────────────────
+const A_X = 0.4, A_W = 0.75;   // 第一个框
 const GAP = 0.15;
-const B_X = A_X + A_W + GAP;   // ← Second element x derived from first, not hard-coded
-const B_W = containerW - B_X;  // Remaining width
+const B_X = A_X + A_W + GAP;   // ← 第二个框 x 从第一个推导，不写死
+const B_W = containerW - B_X;  // 剩余宽度
 
-// ── Progress bar + right label (classic right-overflow scenario) ────────────
-// ❌ Wrong: barW hard-coded, no space reserved for label, barX + barW + gap + labelW exceeds SW
-const barW_wrong = 4.8;  // Will overflow
+// ── 进度条 + 右侧标签（超出右边界的典型场景）────────────
+// ❌ 错误：barW 写死，没有为标签留空间，barX + barW + gap + labelW 超出 SW
+const barW_wrong = 4.8;  // 飞出去
 
-// ✅ Correct: define right label width first, then derive barW
+// ✅ 正确：先定右侧标签宽度，再倒推 barW
 const BAR_X = 4.5, LABEL_W = 1.8, GAP2 = 0.15;
-const BAR_W = SW - PAD - BAR_X - GAP2 - LABEL_W;  // All remaining space goes to bar
-// Label: x = BAR_X + BAR_W + GAP2, w = LABEL_W, right edge = SW - PAD ✓
+const BAR_W = SW - PAD - BAR_X - GAP2 - LABEL_W;  // 剩余空间全给 bar
+// 标签：x = BAR_X + BAR_W + GAP2，w = LABEL_W，右边界 = SW - PAD ✓
 
-// ── Vertical stack (e.g. title + subtitle + body) ──────────────────────────
+// ── 纵向堆叠（如标题 + 副标题 + 正文）──────────────────
 const TITLE_Y = 1.2, TITLE_H = 0.5;
-const SUB_Y   = TITLE_Y + TITLE_H + 0.1;   // ← Derived from bottom of previous element
+const SUB_Y   = TITLE_Y + TITLE_H + 0.1;   // ← 从上一个框底部推导
 const BODY_Y2 = SUB_Y + 0.3 + 0.1;
 
-// ── Large number card (number + label) ────────────────────────────
-// ❌ Common error: h too small + label y hard-coded, causing overlap
+// ── 大数字卡片（数字 + 标签）────────────────────────────
+// ❌ 常见错误：h 给不够 + 标签 y 独立写死，两者重叠
 slide.addText("3,100", { y: cardY + 0.15, h: 0.45, fontSize: 48, shrinkText: true });
-slide.addText("Market Size", { y: cardY + 0.55, h: 0.3 });  // 0.15+0.45=0.60, label starts at 0.55 — overlap!
+slide.addText("市场规模", { y: cardY + 0.55, h: 0.3 });  // 0.15+0.45=0.60，标签从0.55开始，重叠！
 
-// ✅ Correct: sufficient h, label y derived from number bottom
+// ✅ 正确：h 给足，标签 y 从数字底部推导
 const numY = cardY + 0.15;
-const numH = 1.1;   // 48pt × 1.4/72 + 0.1 ≈ 1.03", use 1.1"
+const numH = 1.1;   // 48pt × 1.4/72 + 0.1 ≈ 1.03"，取 1.1"
 slide.addText("3,100", { y: numY, h: numH, fontSize: 48, margin: 0, shrinkText: true });
-const labelY = numY + numH + 0.05;   // ← Derived from bottom, not hard-coded
-slide.addText("Market Size", { y: labelY, h: cardH - (labelY - cardY) - 0.05, ... });
+const labelY = numY + numH + 0.05;   // ← 从底部推导，不写死
+slide.addText("市场规模", { y: labelY, h: cardH - (labelY - cardY) - 0.05, ... });
 
-// ── Batch elements (cards, list rows) ────────────────────────────
-// Use loop + cumulative y, don't manually list each y
+// ── 批量元素（卡片、列表行）────────────────────────────
+// 用循环 + 累积 y，不手动列出每个 y
 let curY = BODY_Y;
 items.forEach(item => {
   const itemH = 0.7;
   slide.addText(item.title, { x: BODY_X, y: curY, w: BODY_W, h: itemH, shrinkText: true });
-  curY += itemH + 0.1;   // ← Increments each time, next element auto-avoids
+  curY += itemH + 0.1;   // ← 每次累加，下一个自动避开
 });
 ```
 
-**Checklist**:
+**核查清单**：
 
-- [ ] Horizontal side-by-side: right box `x = left box x + left box w + gap`
-- [ ] Vertical stack: lower box `y = upper box y + upper box h + gap`
-- [ ] Batch elements use cumulative variables `curY`/`curX`, don't manually write each coordinate
-- [ ] `gap ≥ 0.08"` (minimum spacing — below this value elements appear nearly touching)
+- [ ] 横向并排：右侧框的 `x = 左侧框x + 左侧框w + gap`
+- [ ] 纵向堆叠：下方框的 `y = 上方框y + 上方框h + gap`
+- [ ] 批量元素用累积变量 `curY`/`curX`，不手写每个坐标
+- [ ] `gap ≥ 0.08"`（最小间距，低于此值视觉上几乎贴合）
 
 ---
 
-## Text Wrapping and Clipping
+## 文字换行与截断
 
-**Cause**: `h` is hard-coded, but font size and content length vary at runtime.
+**原因**：`h` 写死，但字号和内容长度在运行时浮动。
 
 ```javascript
-// Fixed position labels (e.g. numeric callouts, legends) → shrinkText
-slide.addText("Longer label", { x: 0.5, y: 1, w: 3, h: 0.4, fontSize: 12, shrinkText: true });
+// 固定位置标签（如数字标注、图例）→ shrinkText
+slide.addText("较长标签", { x: 0.5, y: 1, w: 3, h: 0.4, fontSize: 12, shrinkText: true });
 
-// Body paragraphs → autoFit (text box expands downward)
-slide.addText("Longer content...", { x: 0.5, y: 1, w: 8, h: 0.5, fontSize: 12, autoFit: true });
+// 正文段落 → autoFit（文本框向下扩展）
+slide.addText("较长内容...", { x: 0.5, y: 1, w: 8, h: 0.5, fontSize: 12, autoFit: true });
 
-// Fixed layout with known line count → manually calculate h
-// Rule of thumb: fontSize 12pt → ~0.22"/line; 14pt → ~0.26"/line
-// Formula: h = lineCount * lineHeight + 0.1
-const h = 3 * 0.26 + 0.1;  // 14pt, 3 lines
-slide.addText("Three lines of text", { x: 0.5, y: 1, w: 8, h, fontSize: 14 });
+// 已知行数的固定布局 → 手动算 h
+// 经验值：fontSize 12pt → 行高约 0.22"；14pt → 约 0.26"
+// 公式：h = lineCount * lineHeight + 0.1
+const h = 3 * 0.26 + 0.1;  // 14pt，3 行
+slide.addText("三行文字", { x: 0.5, y: 1, w: 8, h, fontSize: 14 });
 ```
 
-| Scenario | Approach |
-| -------- | -------- |
-| Single-line labels, numeric callouts | `shrinkText: true` |
-| Body text, description paragraphs | `autoFit: true` |
-| Fixed layout with known line count | Manually calculate `h` |
+| 场景               | 方案               |
+| ------------------ | ------------------ |
+| 单行标签、数字标注 | `shrinkText: true` |
+| 正文、说明段落     | `autoFit: true`    |
+| 已知行数的固定布局 | 手动计算 `h`       |
 
 ---
 
-## Table Overflowing the Page
+## 表格溢出页面
 
-**⚠️ `sum(colW)` must equal `w`, otherwise the table overflows the right boundary**: PptxGenJS uses `colW` to render each column width — the `w` parameter is ignored. If they differ, the actual table width = `x + sum(colW)`, and any excess directly overflows the slide.
+**⚠️ `colW` 之和必须等于 `w`，否则表格超出右边界**：PptxGenJS 以 `colW` 为准渲染每列宽度，`w` 参数被忽略。若两者不一致，表格实际宽度 = `x + sum(colW)`，超出部分直接溢出幻灯片。
 
 ```javascript
-// ❌ Wrong: colW sums to 10.0", but w: 9.2" — table right edge = 0.4 + 10.0 = 10.4", overflow
+// ❌ 错误：colW 合计 10.0"，但 w: 9.2"，表格右边界 = 0.4 + 10.0 = 10.4"，超出
 s6.addTable(data, { x: 0.4, w: 9.2, colW: [3.2, 1.7, 1.7, 1.7, 1.7] });  // 3.2+1.7×4=10.0
 
-// ✅ Correct: define w first, then make colW sum equal to w
+// ✅ 正确：先定 w，再让 colW 之和等于 w
 const TBL_W = SW - PAD * 2;  // 9.2"
-s6.addTable(data, { x: PAD, w: TBL_W, colW: [3.0, 1.55, 1.55, 1.55, 1.55] });  // total: 9.2"
+s6.addTable(data, { x: PAD, w: TBL_W, colW: [3.0, 1.55, 1.55, 1.55, 1.55] });  // 合计 9.2"
 ```
 
-**Root cause**: The `h` in `addTable` is only an initial value — PptxGenJS auto-expands for many rows, regardless of page bounds.
+**原因**：`addTable` 的 `h` 只是初始值，行数多时 PptxGenJS 自动撑高，不管页面边界。
 
 ```javascript
-const ROW_H    = 0.28;   // Regular rows (fontSize 10-11pt)
-const HEADER_H = 0.35;   // Header row
+const ROW_H    = 0.28;   // 普通行（fontSize 10-11pt）
+const HEADER_H = 0.35;   // 表头行
 const startY   = 1.2;
-const maxH     = SH - 0.35 - startY;   // Reserve space at bottom for page badge
+const maxH     = SH - 0.35 - startY;   // 底部留页码徽章
 
-// Pre-validate: truncate rows if overflow
+// 生成前校验，超出则截断行数
 const maxRows = Math.floor((maxH - HEADER_H) / ROW_H);
 if (tableData.length - 1 > maxRows) {
   tableData = [tableData[0], ...tableData.slice(1, maxRows + 1)];
@@ -287,57 +287,57 @@ if (tableData.length - 1 > maxRows) {
 
 slide.addTable(tableData, {
   x: 0.5, y: startY, w: 9,
-  rowH: ROW_H,          // Required — without this, many rows overflow the page
-  colW: [3, 3, 3],      // Must sum to equal w
+  rowH: ROW_H,          // 必须传，固定行高
+  colW: [3, 3, 3],      // 各列之和等于 w
   fontSize: 10,
 });
 ```
 
-- Without `rowH`, PptxGenJS expands by content height — easily overflows with many rows
-- For more than 8-10 rows, consider reducing `fontSize` (9-10pt) or splitting into two slides
+- 不传 `rowH` 时 PptxGenJS 按内容撑高，列多时极易超出
+- 超过 8-10 行考虑缩小 `fontSize`（9-10pt）或拆成两张幻灯片
 
 ---
 
-## Generic Element Overlap Rules
+## 元素重叠通用规则
 
-| Overlap type | Root cause | Fix |
-| ------------ | ---------- | --- |
-| Title overlaps body | `BODY_Y` not derived from `TITLE_Y + TITLE_H` | Use area variables; don't hard-code y |
-| Body overflows bottom | `BODY_H` doesn't account for bottom badge height | `BODY_H = SH - BODY_Y - PAD - 0.35` |
-| Column elements overlap | Two-column x coordinates overlap | `COL2_X = COL1_X + COL_W + GAP` |
-| Chart overlaps title | Chart y starts at 0 | Chart y must be ≥ `BODY_Y` |
+| 重叠类型       | 根因                                   | 修法                                |
+| -------------- | -------------------------------------- | ----------------------------------- |
+| 标题压正文     | `BODY_Y` 没从 `TITLE_Y + TITLE_H` 推导 | 用区域变量，不写死 y                |
+| 正文超出底部   | `BODY_H` 没扣除底部徽章高度            | `BODY_H = SH - BODY_Y - PAD - 0.35` |
+| 分栏元素互压   | 两栏 x 坐标重叠                        | `COL2_X = COL1_X + COL_W + GAP`     |
+| 图表与标题重叠 | 图表 y 从 0 开始                       | 图表 y 必须 ≥ `BODY_Y`              |
 
 ---
 
-## Timeline: Label Text Overlaps Axis Line
+## 时间轴：标注文字与轴线重叠
 
-**Root cause**: Axis line position and label y coordinates are each hard-coded with no dependency. Changing one doesn't update the other.
+**根因**：轴线位置和标注 y 坐标各自写死，没有依存关系，改一个另一个不跟着动。
 
-### Correct approach: derive everything from AXIS_Y
+### 正确做法：全部从 AXIS_Y 推导
 
 ```javascript
 const N       = 5;
-const AXIS_Y  = 2.8;     // Axis line y (vertically centered)
+const AXIS_Y  = 2.8;     // 轴线 y（垂直居中）
 const AXIS_X1 = 0.8;
 const AXIS_X2 = 9.2;
-const DOT_R   = 0.12;    // Dot radius
-const STEM_H  = 0.35;    // Stem length (determines gap between line and label, ≥ 0.3")
-const LABEL_H = 0.5;     // Label text box height
-const LABEL_W = 1.4;     // Label text box width
+const DOT_R   = 0.12;    // 圆点半径
+const STEM_H  = 0.35;    // 竖线长度（决定线与文字的间距，≥ 0.3"）
+const LABEL_H = 0.5;     // 标注文字框高度
+const LABEL_W = 1.4;     // 标注文字框宽度
 
 const step = (AXIS_X2 - AXIS_X1) / (N - 1);
 
-// Pre-validation: label box must not be wider than node spacing
-if (LABEL_W > step - 0.1) throw new Error(`LABEL_W ${LABEL_W} > step ${step}, adjacent labels will overlap`);
+// 生成前校验：标注框不能比节点间距更宽
+if (LABEL_W > step - 0.1) throw new Error(`LABEL_W ${LABEL_W} > step ${step}, 相邻标注会重叠`);
 
 const nodes = Array.from({ length: N }, (_, i) => ({
   x: AXIS_X1 + i * step,
   year: `${2018 + i * 2}`,
-  desc: "Description text",
-  above: i % 2 === 0,   // Alternate above/below to prevent horizontal overlap
+  desc: "描述文字",
+  above: i % 2 === 0,   // 奇偶交替，防相邻标注水平挤压
 }));
 
-// Axis line
+// 轴线
 slide.addShape(pres.shapes.LINE, {
   x: AXIS_X1, y: AXIS_Y, w: AXIS_X2 - AXIS_X1, h: 0,
   line: { color: "94A3B8", width: 2 },
@@ -346,13 +346,13 @@ slide.addShape(pres.shapes.LINE, {
 nodes.forEach(node => {
   const dir = node.above ? -1 : 1;
 
-  // Dot
+  // 圆点
   slide.addShape(pres.shapes.OVAL, {
     x: node.x - DOT_R, y: AXIS_Y - DOT_R, w: DOT_R * 2, h: DOT_R * 2,
     fill: { color: "2563EB" }, line: { color: "2563EB" },
   });
 
-  // Stem: starts from dot edge, end = start + STEM_H
+  // 竖线：从圆边缘出发，终点 = 起点 + STEM_H
   const stemStart = AXIS_Y + dir * DOT_R;
   const stemEnd   = stemStart + dir * STEM_H;
   slide.addShape(pres.shapes.LINE, {
@@ -360,7 +360,7 @@ nodes.forEach(node => {
     line: { color: "CBD5E1", width: 1 },
   });
 
-  // Label: immediately after stem end, never overlaps the line
+  // 标注：紧接竖线终点，永远不会压线
   const labelY = node.above ? stemEnd - LABEL_H : stemEnd;
   slide.addText([
     { text: node.year, options: { bold: true, breakLine: true, fontSize: 11 } },
@@ -373,55 +373,55 @@ nodes.forEach(node => {
 });
 ```
 
-### Timeline Overlap Quick Reference
+### 时间轴重叠速查
 
-| Overlap type | Cause | Fix |
-| ------------ | ----- | --- |
-| Label overlaps axis line | `STEM_H` too small | `STEM_H ≥ 0.3"` |
-| Adjacent labels overlap horizontally | `LABEL_W > step` | Reduce `LABEL_W` or decrease number of nodes |
-| Upper label exceeds top boundary | `AXIS_Y` too high | `AXIS_Y ≥ BODY_Y + STEM_H + LABEL_H` |
-| Lower label exceeds bottom boundary | `AXIS_Y` too low | `AXIS_Y + DOT_R + STEM_H + LABEL_H ≤ SH - PAD - 0.35` |
+| 重叠类型         | 原因             | 修法                                                  |
+| ---------------- | ---------------- | ----------------------------------------------------- |
+| 标注压在轴线上   | `STEM_H` 太小    | `STEM_H ≥ 0.3"`                                       |
+| 相邻标注水平重叠 | `LABEL_W > step` | 缩小 `LABEL_W` 或减少节点数                           |
+| 上方标注超出顶部 | `AXIS_Y` 太靠上  | `AXIS_Y ≥ BODY_Y + STEM_H + LABEL_H`                  |
+| 下方标注超出底部 | `AXIS_Y` 太靠下  | `AXIS_Y + DOT_R + STEM_H + LABEL_H ≤ SH - PAD - 0.35` |
 
 ---
 
-## Process Flow / Step Diagram: Node, Connector, and Arrow Coordinates Must Be Linked
+## 流程图 / 步骤图：节点、连线、箭头坐标必须联动
 
-**Root cause**: Circle nodes, horizontal connectors, and arrows each have hard-coded coordinates. Changing the number of nodes or spacing doesn't update the others, causing misaligned connectors, floating arrows, or arrows passing through circles.
+**根因**：节点圆圈、水平连线、箭头各自写死坐标，修改节点数量或间距时其他元素不跟着动，导致连线与节点错位、箭头悬空或穿透圆圈。
 
-**Correct approach: derive everything from the same set of named variables**:
+**正确做法：全部从同一组命名变量推导**：
 
 ```javascript
-const N        = 5;       // Number of steps
-const ROW_Y    = 1.6;     // Circle center y (horizontal flow diagram)
-const START_X  = 0.9;     // First circle center x
-const END_X    = 9.1;     // Last circle center x
-const CIRCLE_R = 0.35;    // Circle radius
-const ARROW_W  = 0.18;    // Arrow icon width (if using image/shape)
+const N        = 5;       // 步骤数
+const ROW_Y    = 1.6;     // 圆圈圆心 y（横向流程图）
+const START_X  = 0.9;     // 第一个圆心 x
+const END_X    = 9.1;     // 最后一个圆心 x
+const CIRCLE_R = 0.35;    // 圆圈半径
+const ARROW_W  = 0.18;    // 箭头图标宽度（若用图片/形状）
 
-const step = (END_X - START_X) / (N - 1);   // Node spacing
+const step = (END_X - START_X) / (N - 1);   // 节点间距
 
-// ── Connectors + arrows (must draw before circles, otherwise circles get covered) ──
+// ── 连线 + 箭头（必须在圆圈之前绘制，否则会盖住圆圈）──
 for (let i = 0; i < N - 1; i++) {
-  const lineX1 = START_X + i * step + CIRCLE_R;        // Start from circle edge
-  const lineX2 = START_X + (i + 1) * step - CIRCLE_R; // End at next circle edge
+  const lineX1 = START_X + i * step + CIRCLE_R;        // 从圆边缘出发
+  const lineX2 = START_X + (i + 1) * step - CIRCLE_R; // 到下一个圆边缘
   const lineW  = lineX2 - lineX1;
-  const midX   = lineX1 + lineW / 2 - ARROW_W / 2;    // Center the arrow
+  const midX   = lineX1 + lineW / 2 - ARROW_W / 2;    // 箭头居中
 
-  // Connector line
+  // 连线
   slide.addShape(pres.shapes.LINE, {
     x: lineX1, y: ROW_Y, w: lineW, h: 0,
     line: { color: "94A3B8", width: 2 },
   });
 
-  // Arrow (using triangle shape or icon)
-  slide.addShape(pres.shapes.TRIANGLE, {   // Or replace with icon image
+  // 箭头（用形状三角形或图标）
+  slide.addShape(pres.shapes.TRIANGLE, {   // 或换成图标图片
     x: midX, y: ROW_Y - 0.08, w: ARROW_W, h: 0.16,
     fill: { color: "94A3B8" }, line: { color: "94A3B8", width: 0 },
     rotate: 90,
   });
 }
 
-// ── Circle nodes (draw after connectors, covers excess line) ──
+// ── 圆圈节点（在连线之后绘制，覆盖多余线段）──
 for (let i = 0; i < N; i++) {
   const cx = START_X + i * step;
   slide.addShape(pres.shapes.OVAL, {
@@ -439,58 +439,58 @@ for (let i = 0; i < N; i++) {
 }
 ```
 
-**Checklist**:
+**核查清单**：
 
-- [ ] Connector x start/end derived from `CIRCLE_R`, not hard-coded
-- [ ] Arrow/separator x derived from connector midpoint, not written as a separate number
-- [ ] Label text x below node derived from circle center x (`cx - LABEL_W / 2`)
-- [ ] After changing node count (N), all coordinates auto-adjust
-- [ ] Connectors and arrows drawn **before** circles (Z-order)
+- [ ] 连线的 `x` 起止点从 `CIRCLE_R` 推导，不写死
+- [ ] 箭头/分隔符的 x 从连线中点推导，不单独写数字
+- [ ] 节点下方说明文字的 x 从圆心 x 推导（`cx - LABEL_W / 2`）
+- [ ] 增减节点数（N）后，所有坐标自动适应
+- [ ] 连线和箭头在圆圈**之前**绘制（Z 轴顺序）
 
 ---
 
-## Known Chart Bugs
+## 图表已知 Bug
 
-### Pie Chart Missing Slice
+### 饼图缺块
 
-When `values` contains `0`, PptxGenJS generates a sector with 0 area, which PowerPoint renders as a gap.
+`values` 中有 `0` 时 PptxGenJS 生成面积为 0 的扇区，PowerPoint 渲染为缺口。
 
 ```javascript
-// Filter zero values before generation
+// 生成前过滤 0 值
 const data = rawData.filter(d => d.value > 0);
 slide.addChart(pres.charts.PIE, [{
-  name: "Share",
+  name: "占比",
   labels: data.map(d => d.label),
   values: data.map(d => d.value),
 }], { x: 2.5, y: 1, w: 4.5, h: 4.5, showPercent: true });
-// Keep w:h at 1:1, otherwise circle becomes ellipse
+// w:h 保持 1:1，否则圆形压扁成椭圆
 ```
 
-### Line Chart Poor Point/Line Quality
+### 折线图点线质量差
 
 ```javascript
 slide.addChart(pres.charts.LINE, chartData, {
-  lineSize: 3,       // Default too thin, use 2-4
-  lineSmooth: true,  // Smooth lines
-  showPoint: true,   // ⚠️ Off by default — without this, lines appear to "float" with no endpoints
-  valAxisMinVal: 0,  // Prevents y-axis range from being too wide, flattening the trend
+  lineSize: 3,       // 默认太细，用 2-4
+  lineSmooth: true,  // 消除锯齿
+  showPoint: true,   // ⚠️ 默认关闭，不设则线条"悬空"无端点
+  valAxisMinVal: 0,  // 防止 y 轴范围过大压平趋势
 });
 ```
 
-### Scatter Chart Points/Lines Separated/Misaligned
+### 散点图点线分离/错位
 
-`SCATTER` data format differs from other charts — the `labels` field is ignored; must use an array of `{x, y}` objects.
+`SCATTER` 的数据格式与其他图表不同，`labels` 字段被忽略，必须用 `{x, y}` 对象数组。
 
 ```javascript
-// ❌ Wrong: labels+values format loses x coordinates in SCATTER, all points fall at x=0
+// ❌ 错误：labels+values 格式在 SCATTER 中 x 坐标丢失，点全落在 x=0
 slide.addChart(pres.charts.SCATTER, [{ labels: ["1","2"], values: [10, 20] }], {});
 
-// ✅ Correct
+// ✅ 正确
 slide.addChart(pres.charts.SCATTER, [{
-  name: "Series 1",
+  name: "系列1",
   values: [{ x: 1, y: 10 }, { x: 2, y: 25 }, { x: 3, y: 18 }]
 }], {
-  lineSize: 0,      // 0 = scatter only; > 0 = points + line
+  lineSize: 0,      // 0 = 纯散点；> 0 = 点+线
   showPoint: true,
 });
 ```

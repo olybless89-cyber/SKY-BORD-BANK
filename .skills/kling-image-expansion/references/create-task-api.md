@@ -4,7 +4,7 @@
 
 | Item | Details |
 |------|---------|
-| Endpoint | `POST https://app-dlavm6ky20ap-api-GYX1bbkRQj4a.gateway.appmedo.com/v1/images/editing/expand` |
+| Endpoint | `POST https://app-dptqkburek1u-api-GYX1bbkRQj4a.gateway.appmedo.com/v1/images/editing/expand` |
 | Function | Submits an image expansion task that extends the original image outward in four directions. Returns a `task_id` for subsequent polling. |
 | Note | Submits the image expansion task; this call is billed |
 
@@ -105,7 +105,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // --- Call upstream ---
   const upstream = await fetch(
-    "https://app-dlavm6ky20ap-api-GYX1bbkRQj4a.gateway.appmedo.com/v1/images/editing/expand",
+    "https://app-dptqkburek1u-api-GYX1bbkRQj4a.gateway.appmedo.com/v1/images/editing/expand",
     {
       method: "POST",
       headers: {

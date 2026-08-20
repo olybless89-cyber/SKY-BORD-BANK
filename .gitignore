@@ -8,13 +8,13 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-/.skills
-/tasks
-package.json.[0-9]*
 dist
 dist-ssr
+output
 *.local
 package-lock.json
+playwright-report
+test-results
 
 # Editor directories and files
 .vscode/*
@@ -26,15 +26,14 @@ package-lock.json
 *.njsproj
 *.sln
 *.sw?
-
-# History and config
-history/*.json
-
+package.json.[0-9]*
 .sync
+history/*.json
 .vite_cache
+__pycache__
+*.pyc
+/.skills
+/tasks
 .native-wind-cache
 .vite
-
-# Sensitive / platform files
 historical_context.txt
-.env

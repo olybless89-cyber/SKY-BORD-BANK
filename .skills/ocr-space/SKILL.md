@@ -14,8 +14,8 @@ This plugin contains two endpoints:
 
 | Endpoint | Method | Description | Billing |
 |----------|--------|-------------|---------|
-| `POST https://app-dlavm6ky20ap-api-W9z3M6eONl3L.gateway.appmedo.com/parse/image` | POST | Core OCR endpoint supporting URL / file upload / Base64 input methods, with advanced features such as table recognition and coordinate overlay | Billed per call |
-| `GET https://app-dlavm6ky20ap-api-m9xKXDbRplNa.gateway.appmedo.com/parse/imageurl` | GET | Simplified GET endpoint supporting URL-only image submission, suitable for quick integration | Not billed |
+| `POST https://app-dptqkburek1u-api-W9z3M6eONl3L.gateway.appmedo.com/parse/image` | POST | Core OCR endpoint supporting URL / file upload / Base64 input methods, with advanced features such as table recognition and coordinate overlay | Billed per call |
+| `GET https://app-dptqkburek1u-api-m9xKXDbRplNa.gateway.appmedo.com/parse/imageurl` | GET | Simplified GET endpoint supporting URL-only image submission, suitable for quick integration | Not billed |
 
 > Prefer the **GET /parse/imageurl** endpoint (free) for simple URL-based image recognition. Use the **POST /parse/image** endpoint only when you need file upload, Base64 input, table recognition, coordinate overlay, or other advanced features.
 
@@ -41,18 +41,24 @@ Return recognized text (or coordinate information)
 
 ## Generation-Time Usage (Agent Direct Call)
 
-See the complete code in each endpoint reference file:
+Use the built-in script for generation-time calls. The script reads `INTEGRATIONS_API_KEY` from the environment.
 
-- POST endpoint (supports file/Base64/advanced features) → read `references/parse-image-api.md`
-- GET endpoint (URL only, lightweight and fast) → read `references/parse-imageurl-api.md`
+**The Bash tool timeout MUST be set to 600000ms (600 seconds).**
 
-Both endpoints use `user_managed` authentication; the auth value is written directly as a code constant:
+```bash
+# OCR from an image URL (preferred — not billed)
+python3 <skill-path>/scripts/call_ocr_space.py --url "https://example.com/document.jpg" --language eng
 
-```typescript
-const AUTH_VALUE = "K87649693488957"; // user_managed — API Key from source_context
+# OCR from a local file (billed)
+python3 <skill-path>/scripts/call_ocr_space.py --file /path/to/document.png --language eng --engine 2
+
+# With table recognition and scaling
+python3 <skill-path>/scripts/call_ocr_space.py --url "https://example.com/table.jpg" --table --scale
 ```
 
-All requests use `X-Gateway-Authorization: <AUTH_VALUE>` (no Bearer prefix, as this is a direct API Key).
+The script prints `{"status":"succeed","result":{...}}` on success. On failure it prints an error to stderr and exits with a non-zero code.
+
+See `references/parse-image-api.md` (POST, supports file/Base64) and `references/parse-imageurl-api.md` (GET, URL only) for the full parameter tables.
 
 ---
 

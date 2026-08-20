@@ -20,8 +20,8 @@ import urllib.parse
 import urllib.request
 
 
-SUBMIT_URL = "https://app-dlavm6ky20ap-api-qYGWo8XA7JVY.gateway.appmedo.com/v1/videos/text2video"
-QUERY_URL_BASE = "https://app-dlavm6ky20ap-api-oLpZ7eD5j2Pa.gateway.appmedo.com/v1/videos/text2video"
+SUBMIT_URL = "https://app-dptqkburek1u-api-qYGWo8XA7JVY.gateway.appmedo.com/v1/videos/text2video"
+QUERY_URL_BASE = "https://app-dptqkburek1u-api-oLpZ7eD5j2Pa.gateway.appmedo.com/v1/videos/text2video"
 POLL_INTERVAL_S = 7
 SAFE_LIMIT_S = 550
 

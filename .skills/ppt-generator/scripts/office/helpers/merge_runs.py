@@ -14,17 +14,6 @@ import defusedxml.minidom
 
 
 def merge_runs(input_dir: str) -> tuple[int, str]:
-    """Merge adjacent <w:r> elements with identical formatting in document.xml.
-
-    Also removes <w:proofErr> elements and rsid attributes from runs before merging.
-    Saves the result back to disk.
-
-    Args:
-        input_dir: Path to the unpacked DOCX directory.
-
-    Returns:
-        A tuple of (merge_count, status_message).
-    """
     doc_xml = Path(input_dir) / "word" / "document.xml"
 
     if not doc_xml.exists():
@@ -51,11 +40,9 @@ def merge_runs(input_dir: str) -> tuple[int, str]:
 
 
 def _find_elements(root, tag: str) -> list:
-    """Return all descendant DOM nodes whose local name matches ``tag``."""
     results = []
 
     def traverse(node):
-        """Recursively visit node and its descendants, collecting matching elements."""
         if node.nodeType == node.ELEMENT_NODE:
             name = node.localName or node.tagName
             if name == tag or name.endswith(f":{tag}"):
@@ -68,7 +55,6 @@ def _find_elements(root, tag: str) -> list:
 
 
 def _get_child(parent, tag: str):
-    """Return the first direct child element whose local name matches ``tag``, or None."""
     for child in parent.childNodes:
         if child.nodeType == child.ELEMENT_NODE:
             name = child.localName or child.tagName
@@ -78,7 +64,6 @@ def _get_child(parent, tag: str):
 
 
 def _get_children(parent, tag: str) -> list:
-    """Return all direct child elements whose local name matches ``tag``."""
     results = []
     for child in parent.childNodes:
         if child.nodeType == child.ELEMENT_NODE:
@@ -89,7 +74,6 @@ def _get_children(parent, tag: str) -> list:
 
 
 def _is_adjacent(elem1, elem2) -> bool:
-    """Return True if elem2 immediately follows elem1 with no element or non-whitespace text between them."""
     node = elem1.nextSibling
     while node:
         if node == elem2:
@@ -103,14 +87,12 @@ def _is_adjacent(elem1, elem2) -> bool:
 
 
 def _remove_elements(root, tag: str):
-    """Remove all descendant elements matching ``tag`` from the DOM tree."""
     for elem in _find_elements(root, tag):
         if elem.parentNode:
             elem.parentNode.removeChild(elem)
 
 
 def _strip_run_rsid_attrs(root):
-    """Remove all rsid-related attributes from every <w:r> element in the tree."""
     for run in _find_elements(root, "r"):
         for attr in list(run.attributes.values()):
             if "rsid" in attr.name.lower():
@@ -118,7 +100,6 @@ def _strip_run_rsid_attrs(root):
 
 
 def _merge_runs_in(container) -> int:
-    """Merge adjacent mergeable runs inside a single container, returning the number of merges."""
     merge_count = 0
     run = _first_child_run(container)
 
@@ -139,7 +120,6 @@ def _merge_runs_in(container) -> int:
 
 
 def _first_child_run(container):
-    """Return the first direct child that is a <w:r> run element, or None."""
     for child in container.childNodes:
         if child.nodeType == child.ELEMENT_NODE and _is_run(child):
             return child
@@ -147,7 +127,6 @@ def _first_child_run(container):
 
 
 def _next_element_sibling(node):
-    """Return the next sibling that is an element node, skipping text and comment nodes."""
     sibling = node.nextSibling
     while sibling:
         if sibling.nodeType == sibling.ELEMENT_NODE:
@@ -157,7 +136,6 @@ def _next_element_sibling(node):
 
 
 def _next_sibling_run(node):
-    """Return the next sibling run element (<w:r>), or None if there is none."""
     sibling = node.nextSibling
     while sibling:
         if sibling.nodeType == sibling.ELEMENT_NODE:
@@ -168,13 +146,11 @@ def _next_sibling_run(node):
 
 
 def _is_run(node) -> bool:
-    """Return True if the node is a <w:r> run element."""
     name = node.localName or node.tagName
     return name == "r" or name.endswith(":r")
 
 
 def _can_merge(run1, run2) -> bool:
-    """Return True if two runs have identical <w:rPr> (or both lack it) and can be merged."""
     rpr1 = _get_child(run1, "rPr")
     rpr2 = _get_child(run2, "rPr")
 
@@ -186,7 +162,6 @@ def _can_merge(run1, run2) -> bool:
 
 
 def _merge_run_content(target, source):
-    """Move non-rPr child elements from ``source`` run into ``target`` run."""
     for child in list(source.childNodes):
         if child.nodeType == child.ELEMENT_NODE:
             name = child.localName or child.tagName
@@ -195,7 +170,6 @@ def _merge_run_content(target, source):
 
 
 def _consolidate_text(run):
-    """Merge consecutive <w:t> elements within a run and update xml:space="preserve" as needed."""
     t_elements = _get_children(run, "t")
 
     for i in range(len(t_elements) - 1, 0, -1):

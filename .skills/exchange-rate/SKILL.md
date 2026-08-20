@@ -12,7 +12,7 @@ Query real-time exchange rates for all supported currencies against a specified 
 
 | Property | Value |
 |----------|-------|
-| Endpoint | `GET https://app-dlavm6ky20ap-api-w9Rbo8E7p2b9.gateway.appmedo.com/v6/latest/{base_currency}` |
+| Endpoint | `GET https://app-dptqkburek1u-api-w9Rbo8E7p2b9.gateway.appmedo.com/v6/latest/{base_currency}` |
 | Auth | Platform-managed gateway (`X-Gateway-Authorization: Bearer <INTEGRATIONS_API_KEY>`) |
 | Supported Currencies | 161 (ISO 4217 three-letter codes) |
 | Data Freshness | Daily updates (not tick-level) |
@@ -77,7 +77,7 @@ interface ExchangeRateResponse {
 
 async function getExchangeRates(baseCurrency: string): Promise<ExchangeRateResponse> {
   const apiKey = process.env["INTEGRATIONS_API_KEY"]; // platform-managed key
-  const url = `https://app-dlavm6ky20ap-api-w9Rbo8E7p2b9.gateway.appmedo.com/v6/latest/${baseCurrency.toUpperCase()}`;
+  const url = `https://app-dptqkburek1u-api-w9Rbo8E7p2b9.gateway.appmedo.com/v6/latest/${baseCurrency.toUpperCase()}`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -144,7 +144,7 @@ serve(async (req: Request): Promise<Response> => {
 
   // Call upstream via platform gateway
   const upstream = await fetch(
-    `https://app-dlavm6ky20ap-api-w9Rbo8E7p2b9.gateway.appmedo.com/v6/latest/${baseCurrency.toUpperCase()}`,
+    `https://app-dptqkburek1u-api-w9Rbo8E7p2b9.gateway.appmedo.com/v6/latest/${baseCurrency.toUpperCase()}`,
     {
       method: "GET",
       headers: {
