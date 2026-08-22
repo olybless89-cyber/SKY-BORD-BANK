@@ -35,6 +35,9 @@
     @keyframes spin{to{transform:rotate(360deg)}}
     footer{background:#0f2356;color:#93c5fd;text-align:center;padding:16px;font-size:13px}
     .pw-hint{font-size:12px;color:#94a3b8;margin-top:-12px;margin-bottom:16px}
+    #google_translate_element{font-size:13px;white-space:nowrap}
+    .goog-te-gadget{font-size:0!important}
+    .goog-te-gadget .goog-te-combo{font-size:12px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.2);color:#fff;padding:3px 6px;border-radius:4px;cursor:pointer}
   </style>
 </head>
 <body>
@@ -53,9 +56,12 @@
       <text x="47" y="42" font-family="Segoe UI,Arial,sans-serif" font-size="8" font-weight="500" fill="#93c5fd" letter-spacing="2.5">BANK</text>
     </svg>
   </a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="login">Sign In</a>
+  <div style="display:flex;align-items:center;gap:20px">
+    <div id="google_translate_element"></div>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="login">Sign In</a>
+    </div>
   </div>
 </nav>
 
@@ -214,6 +220,12 @@ function finishRegister() {
   setTimeout(function() { window.location.replace("/dashboard"); }, 1500);
 }
 </script>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   <!-- Live Chat Widget -->
   <script src="/chat-widget.js"></script>
 </body>

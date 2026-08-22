@@ -43,6 +43,9 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#e2e8f0;min-height:
 .hamburger{display:none}
 @media(max-width:768px){.hamburger{display:flex}}
 .logout-btn{background:#1e2d4a;color:#94a3b8;border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+#google_translate_element{font-size:13px;white-space:nowrap}
+.goog-te-gadget{font-size:0!important}
+.goog-te-gadget .goog-te-combo{font-size:12px;border:1px solid #1e2d4a;background:#1a2640;color:#e2e8f0;padding:4px 8px;border-radius:8px;cursor:pointer}
 .logout-btn:hover{background:#2563eb;color:#fff}
 
 /* ── Content ── */
@@ -269,6 +272,7 @@ body{font-family:'Inter',sans-serif;background:#0b1120;color:#e2e8f0;min-height:
         <span class="topbar-title" id="page-title">Dashboard</span>
       </div>
       <div class="topbar-right">
+        <div id="google_translate_element"></div>
         <button class="btn-icon" onclick="loadAll()" title="Refresh">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
         </button>
@@ -790,6 +794,8 @@ async function init() {
       return;
     }
     if (profile.status === 'inactive') { sb.auth.signOut(); window.location.replace('/admin-login'); return; }
+    // Admin flagged for a forced password change must go back to the portal first.
+    if (profile.must_change_password) { window.location.replace('/admin-login'); return; }
     currentUser = profile;
     document.getElementById('admin-name').textContent = profile.full_name || profile.email.split('@')[0];
     document.getElementById('admin-avatar').textContent = (profile.full_name || profile.email)[0].toUpperCase();
@@ -1555,5 +1561,11 @@ async function updateLcStatus() {
 
 init();
 </script>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

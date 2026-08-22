@@ -34,6 +34,9 @@
     .spinner{width:40px;height:40px;border:4px solid #dbeafe;border-top:4px solid #1d4ed8;border-radius:50%;animation:spin .8s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
     footer{background:#0f2356;color:#93c5fd;text-align:center;padding:16px;font-size:13px}
+    #google_translate_element{font-size:13px;white-space:nowrap}
+    .goog-te-gadget{font-size:0!important}
+    .goog-te-gadget .goog-te-combo{font-size:12px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.2);color:#fff;padding:3px 6px;border-radius:4px;cursor:pointer}
   </style>
 </head>
 <body>
@@ -52,9 +55,12 @@
       <text x="47" y="42" font-family="Segoe UI,Arial,sans-serif" font-size="8" font-weight="500" fill="#93c5fd" letter-spacing="2.5">BANK</text>
     </svg>
   </a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="register">Register</a>
+  <div style="display:flex;align-items:center;gap:20px">
+    <div id="google_translate_element"></div>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="register">Register</a>
+    </div>
   </div>
 </nav>
 
@@ -73,6 +79,16 @@
       <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
 
       <button type="submit" class="btn" id="submit-btn">Sign In</button>
+    </form>
+
+    <form id="pw-form" onsubmit="doChangePw(event)" style="display:none">
+      <label for="new_pw">New password</label>
+      <input type="password" id="new_pw" name="new_pw" placeholder="Min. 8 characters" autocomplete="new-password" required>
+
+      <label for="new_pw2">Confirm new password</label>
+      <input type="password" id="new_pw2" name="new_pw2" placeholder="Re-enter new password" autocomplete="new-password" required>
+
+      <button type="submit" class="btn" id="pw-btn">Set New Password</button>
     </form>
 
     <hr class="divider">
@@ -102,14 +118,16 @@ function showErr(msg) {
   btn.textContent = "Sign In";
 }
 
-// Admin login page — redirect to admin if already logged in as admin, else stay
+// Admin login page — redirect to admin if already logged in as admin, else stay.
+// Admins flagged must_change_password are routed to the forced-change form instead.
 sb.auth.getSession().then(function(res) {
   var session = res.data && res.data.session;
   if (!session) return;
-  sb.from("profiles").select("role,status")
+  sb.from("profiles").select("role,status,must_change_password")
     .eq("id", session.user.id).single()
     .then(function(p) {
       if (p.data && p.data.role === "admin" && p.data.status !== "inactive") {
+        if (p.data.must_change_password) { showPwForm(); return; }
         window.location.replace("/admin");
       } else {
         // Non-admin trying admin login page — sign them out and stay
@@ -117,6 +135,15 @@ sb.auth.getSession().then(function(res) {
       }
     });
 });
+
+function showPwForm() {
+  overlay.style.display = "none";
+  errMsg.style.display = "none";
+  document.getElementById("login-form").style.display = "none";
+  document.getElementById("pw-form").style.display = "block";
+  document.querySelector(".card-title").textContent = "Set a new password";
+  document.querySelector(".card-sub").textContent = "For security, you must choose a new password before continuing.";
+}
 
 function doLogin(e) {
   e.preventDefault();
@@ -132,7 +159,7 @@ function doLogin(e) {
     sb.auth.signInWithPassword({ email: email, password: password })
       .then(function(res) {
         if (res.error) { showErr(res.error.message); return; }
-        sb.from("profiles").select("role,status")
+        sb.from("profiles").select("role,status,must_change_password")
           .eq("id", res.data.user.id).single()
           .then(function(p) {
             if (!p.data || p.data.role !== "admin") {
@@ -145,12 +172,55 @@ function doLogin(e) {
               showErr("Your admin account has been deactivated. Contact support.");
               return;
             }
+            if (p.data.must_change_password) { showPwForm(); return; }
             window.location.replace("/admin");
           });
       })
       .catch(function(err) { showErr("Network error. Please try again."); });
   });
 }
+
+function doChangePw(e) {
+  e.preventDefault();
+  var pw1 = document.getElementById("new_pw").value;
+  var pw2 = document.getElementById("new_pw2").value;
+  var pwBtn = document.getElementById("pw-btn");
+
+  if (pw1.length < 8) { showErr("New password must be at least 8 characters."); return; }
+  if (pw1 !== pw2)    { showErr("Passwords do not match."); return; }
+
+  errMsg.style.display = "none";
+  pwBtn.disabled = true;
+  pwBtn.textContent = "Updating...";
+  overlay.style.display = "flex";
+
+  sb.auth.updateUser({ password: pw1 })
+    .then(function(res) {
+      if (res.error) {
+        overlay.style.display = "none";
+        pwBtn.disabled = false;
+        pwBtn.textContent = "Set New Password";
+        showErr(res.error.message);
+        return;
+      }
+      var uid = res.data.user.id;
+      sb.from("profiles").update({ must_change_password: false }).eq("id", uid)
+        .then(function() { window.location.replace("/admin"); })
+        .catch(function() { window.location.replace("/admin"); });
+    })
+    .catch(function() {
+      overlay.style.display = "none";
+      pwBtn.disabled = false;
+      pwBtn.textContent = "Set New Password";
+      showErr("Network error. Please try again.");
+    });
+}
 </script>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

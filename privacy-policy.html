@@ -36,6 +36,7 @@
 </head>
 
 <body>
+	<div id="google_translate_element" style="position:fixed;top:16px;right:16px;z-index:1000"></div>
 	<div id="notfound">
 		<div class="notfound-bg"></div>
 		<div class="notfound">
@@ -46,6 +47,12 @@
 			<a href="." class="home-btn">Go Back</a>
 		</div>
 	</div>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
 

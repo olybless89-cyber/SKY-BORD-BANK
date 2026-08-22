@@ -181,6 +181,19 @@ context. Specifically:
 Do NOT put the wallet address in any account-number spot again — that was the
 "wallet address showing where normal account number should be" bug.
 
+## Google Translate coverage (2026-08)
+Every page of the site loads the classic Google Translate widget
+(`google_translate_element` div + `//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit`).
+Originally only ~9 marketing pages had it; it is now on ALL 16 pages
+(both copies: repo root + `public/`): the navbar pages put the div in the
+navbar/topbar (`login`, `register`, `admin-login`, `dashboard`,
+`admin`), the 404-style pages (`faq`, `privacy-policy`) put it
+`position:fixed` top-right. Per-page combo styling must match the bar
+background (light styling on dark navy bars; dark `var(--text)`/`var(--border)`
+on the white dashboard topbar; `#1a2640` on the admin's dark topbar).
+Language choice persists across pages via the `googtrans` cookie.
+When editing these pages keep root and `public/` in sync (`cp public/<p>.html <p>.html`).
+
 ## Full schema reference
 `SQL/supabase/002_full_app_schema.sql` is the complete, current schema
 (tables, RLS, signup trigger, all 11 RPCs) as a single idempotent file. It is a
